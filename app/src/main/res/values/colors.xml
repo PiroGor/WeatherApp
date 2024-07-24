@@ -2,4 +2,27 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Menu Background -->
+    <color name="menu_background">#FF000C37</color>
+
+    <!-- Background colors -->
+    <!-- Morning version -->
+    <color name="start_morning_background">#3D82C6</color>
+    <color name="middle_morning_background">#FFB68D</color>
+    <color name="end_morning_background">#FFF78E</color>
+    <color name="morning_background2">#F4B28E</color>
+
+
+    <!-- Afternoon version -->
+    <color name="start_afternoon_background">#FF270157</color>
+    <color name="middle_afternoon_background">#FF7005C9</color>
+    <color name="end_afternoon_background">#FFB43E8F</color>
+    <color name="afternoon_background2">#FF331866</color>
+
+    <!-- Night version -->
+    <color name="start_night_background">#00072D</color>
+    <color name="middle_night_background">#001C55</color>
+    <color name="end_night_background">#0A2472</color>
+    <color name="night_background2">#03045e</color>
 </resources>

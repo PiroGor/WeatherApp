@@ -1,3 +1,18 @@
 <resources>
-    <string name="app_name">WeatherApp</string>
+    <!-- App information -->
+    <string name="app_name">Weather App</string>
+    <string name="app_version">1.0</string>
+
+    <!-- Info for weather -->
+    <string name="weather_url">https://api.openweathermap.org/data/2.5/weather</string>
+    <string name="weather_key">insert your key here</string>
+    <string name="city">Wroclaw</string>
+
+    <!-- Update menu item -->
+    <string name="action_update">Update</string>
+    <!-- Archive menu item -->
+    <string name="action_archive">Archive</string>
+    <!-- Info menu item -->
+    <string name="action_info">Info</string>
+
 </resources>
