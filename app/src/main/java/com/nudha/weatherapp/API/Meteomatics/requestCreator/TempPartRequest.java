@@ -1,4 +1,4 @@
-package com.nudha.weatherapp.API.Meteomatics;
+package com.nudha.weatherapp.API.Meteomatics.requestCreator;
 
 public class TempPartRequest {
     private static final String temp = "t_2m:C";

@@ -1,8 +1,6 @@
 package com.nudha.weatherapp.Activities;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,27 +15,28 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.nudha.weatherapp.API.Meteomatics.request.ApiService;
+import com.nudha.weatherapp.API.Meteomatics.request.WeatherResponse;
+import com.nudha.weatherapp.API.Meteomatics.requestCreator.LocationPartRequest;
+import com.nudha.weatherapp.API.Meteomatics.requestCreator.TempPartRequest;
+import com.nudha.weatherapp.API.Meteomatics.requestCreator.TimePartRequest;
 import com.nudha.weatherapp.Domains.Hourly;
 import com.nudha.weatherapp.Adapters.HourlyAdapters;
 import com.nudha.weatherapp.R;
 import com.nudha.weatherapp.permissions.LocationUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterHourly;
     private RecyclerView recyclerView;
     private LocationUtils locationUtils;
+    private TextView tempNow, rainPercentNow,
+            windSpeedNow, humidityPercentNow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +47,45 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setPopupTheme(R.style.MyMenuTheme);
 
+        tempNow = findViewById(R.id.textView_tempNow);
+        rainPercentNow = findViewById(R.id.rain_percent_now_TextView);
+        windSpeedNow = findViewById(R.id.wind_speed_now_TextView);
+        humidityPercentNow = findViewById(R.id.humidity_percent_now_TextView);
+
         locationUtils = new LocationUtils(this);
         locationUtils.requestLocation();
 
+
         initRecyclerview();
+
         setVariable();
+
+        ApiService.getInstance().changeBaseUrl("https://api.meteomatics.com/");
+
+        String date = TimePartRequest.timeConvert("now");
+        String parameter = TempPartRequest.getTemp();
+        String coordinates = LocationPartRequest.getLocationCoordinates();
+
+        // Вызов API для получения данных о погоде
+        ApiService.getInstance().getWeatherApi().getWeather(date, parameter, coordinates).enqueue(new Callback<WeatherResponse>() {
+            @Override
+            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    WeatherResponse weatherResponse = response.body();
+                    Log.d("WeatherApp", "Response: " + weatherResponse.toString());
+
+                    // Обработка успешного ответа
+                    tempNow.setText(weatherResponse.data.get(0).coordinates.get(0).dates.get(0).value + " °C");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                // Обработка ошибки
+                Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("WeatherApp", "Error: " + t.getMessage());
+            }
+        });
 
     }
     @Override
@@ -87,15 +120,15 @@ public class MainActivity extends AppCompatActivity {
         next7days_btn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, FutureActivity.class))
         );
     }
-
+//адаптировать после now
     private void initRecyclerview(){
         ArrayList<Hourly> items = new ArrayList<>();
 
-        items.add(new Hourly("9 pm",23,"cloudy"));
-        items.add(new Hourly("11 pm",24,"sunny"));
-        items.add(new Hourly("12 pm",26,"wind"));
-        items.add(new Hourly("1 am",26,"rainy"));
-        items.add(new Hourly("2 am",27,"storm"));
+        items.add(new Hourly("9 ",23,"cloudy"));
+        items.add(new Hourly("11 ",24,"sunny"));
+        items.add(new Hourly("12 ",26,"wind"));
+        items.add(new Hourly("1 ",26,"rainy"));
+        items.add(new Hourly("2 ",27,"storm"));
 
         recyclerView = findViewById(R.id.view1);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -109,4 +142,5 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         locationUtils.handlePermissionResult(requestCode, permissions, grantResults);
     }
+
 }

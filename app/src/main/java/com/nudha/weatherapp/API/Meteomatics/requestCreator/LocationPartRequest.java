@@ -1,4 +1,4 @@
-package com.nudha.weatherapp.API.Meteomatics;
+package com.nudha.weatherapp.API.Meteomatics.requestCreator;
 
 public class LocationPartRequest {
     private static String latitude;
@@ -13,7 +13,7 @@ public class LocationPartRequest {
         longitude = String.valueOf(longitude1);
     }
 
-    public static String getLocationPart(){
+    public static String getLocationCoordinates(){
         return latitude + "," + longitude;
     }
 
