@@ -5,46 +5,73 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
+import java.util.List;
+
 public class WeatherResponse {
-    @SerializedName("version")
-    public String version;
+    private String version;
+    private String user;
+    private String dateGenerated;
+    private String status;
+    private List<Data> data;
 
-    @SerializedName("user")
-    public String user;
+    // Getters and Setters
 
-    @SerializedName("dateGenerated")
-    public String dateGenerated;
+    public String getVersion() { return version; }
+    public void setVersion(String version) { this.version = version; }
 
-    @SerializedName("status")
-    public String status;
+    public String getUser() { return user; }
+    public void setUser(String user) { this.user = user; }
 
-    @SerializedName("data")
-    public List<WeatherData> data;
+    public String getDateGenerated() { return dateGenerated; }
+    public void setDateGenerated(String dateGenerated) { this.dateGenerated = dateGenerated; }
 
-    public static class WeatherData {
-        @SerializedName("parameter")
-        public String parameter;
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-        @SerializedName("coordinates")
-        public List<Coordinate> coordinates;
-    }
+    public List<Data> getData() { return data; }
+    public void setData(List<Data> data) { this.data = data; }
 
-    public static class Coordinate {
-        @SerializedName("lat")
-        public double lat;
+    public static class Data {
+        private String parameter;
+        private List<Coordinate> coordinates;
 
-        @SerializedName("lon")
-        public double lon;
+        // Getters and Setters
 
-        @SerializedName("dates")
-        public List<DateValue> dates;
-    }
+        public String getParameter() { return parameter; }
+        public void setParameter(String parameter) { this.parameter = parameter; }
 
-    public static class DateValue {
-        @SerializedName("date")
-        public String date;
+        public List<Coordinate> getCoordinates() { return coordinates; }
+        public void setCoordinates(List<Coordinate> coordinates) { this.coordinates = coordinates; }
 
-        @SerializedName("value")
-        public double value;
+        public static class Coordinate {
+            private double lat;
+            private double lon;
+            private List<DateValue> dates;
+
+            // Getters and Setters
+
+            public double getLat() { return lat; }
+            public void setLat(double lat) { this.lat = lat; }
+
+            public double getLon() { return lon; }
+            public void setLon(double lon) { this.lon = lon; }
+
+            public List<DateValue> getDates() { return dates; }
+            public void setDates(List<DateValue> dates) { this.dates = dates; }
+
+            public static class DateValue {
+                private String date;
+                private double value;
+
+                // Getters and Setters
+
+                public String getDate() { return date; }
+                public void setDate(String date) { this.date = date; }
+
+                public double getValue() { return value; }
+                public void setValue(double value) { this.value = value; }
+            }
+        }
     }
 }
+

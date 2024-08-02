@@ -63,7 +63,6 @@ public class LocationUtils {
                             double latitude = location.getLatitude();
                             double longitude = location.getLongitude();
                             WeatherRequest.setLocation(latitude, longitude);
-                            Toast.makeText(activity, "Lat: " + latitude + ", Lng: " + longitude, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

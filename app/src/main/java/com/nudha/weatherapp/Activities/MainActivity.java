@@ -1,6 +1,7 @@
 package com.nudha.weatherapp.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -40,11 +41,14 @@ public class MainActivity extends AppCompatActivity {
     private LocationUtils locationUtils;
     private TextView tempNow, rainPercentNow,
             windSpeedNow, humidityPercentNow;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -65,37 +69,15 @@ public class MainActivity extends AppCompatActivity {
 
         setData();
 
-
         //Сделать так чтобы оно с открытием приложения подгружало данные о погоде
 
-        ApiService.getInstance().changeBaseUrl("https://api.meteomatics.com/");
+        String savedData = sharedPreferences.getString("tempNow", null);
+        if (savedData != null) {
+            tempNow.setText(savedData);
+        }else{
+            setWeatherNow();
+        }
 
-        String date = TimePartRequest.timeConvert("now");
-        String parameter = TempPartRequest.getTemp();
-        String coordinates = LocationPartRequest.getLocationCoordinates();
-
-        // Вызов API для получения данных о погоде
-        ApiService.getInstance().getWeatherApi().getWeather(date, parameter, coordinates).enqueue(new Callback<WeatherResponse>() {
-            @Override
-            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    WeatherResponse weatherResponse = response.body();
-                    Log.d("WeatherApp", "Response: " + weatherResponse.toString());
-
-                    // Обработка успешного ответа
-                    tempNow.setText(weatherResponse.data.get(0).coordinates.get(0).dates.get(0).value + " °C");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                // Обработка ошибки
-                Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.e("WeatherApp", "Error: " + t.getMessage());
-            }
-        });
-
-        recreate();
 
     }
     @Override
@@ -159,6 +141,39 @@ public class MainActivity extends AppCompatActivity {
         TextView data = findViewById(R.id.data_textView);
         data.setText(dateFormat.format(date));
 
+    }
+
+    public void setWeatherNow(){
+        ApiService.getInstance().changeBaseUrl("https://api.meteomatics.com/");
+
+        ApiService.getInstance().getWeatherApi().getWeather(TimePartRequest.timeConvert("now"),
+                TempPartRequest.getTemp(), LocationPartRequest.getLocationCoordinates()).enqueue(new Callback<WeatherResponse>() {
+            @Override
+            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                if(response.isSuccessful()){
+                    WeatherResponse weatherResponse = response.body();
+                    if (weatherResponse != null && weatherResponse.getData() != null
+                            && !weatherResponse.getData().isEmpty()) {
+                        WeatherResponse.Data firstData = weatherResponse.getData().get(0);
+                        WeatherResponse.Data.Coordinate firstCoordinate = firstData.getCoordinates().get(0);
+                        WeatherResponse.Data.Coordinate.DateValue firstDateValue = firstCoordinate.getDates().get(0);
+
+                        //Save data to shared preferences
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("tempNow", String.valueOf(firstDateValue.getValue()));
+                        editor.apply();
+
+                        tempNow.setText(String.valueOf(firstDateValue.getValue()));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                Log.e("MainActivity", "Error: " + t.getMessage());
+                Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }
