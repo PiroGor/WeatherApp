@@ -25,7 +25,10 @@ import com.nudha.weatherapp.Adapters.HourlyAdapters;
 import com.nudha.weatherapp.R;
 import com.nudha.weatherapp.permissions.LocationUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
 
         setVariable();
 
+        setData();
+
+
+        //Сделать так чтобы оно с открытием приложения подгружало данные о погоде
+
         ApiService.getInstance().changeBaseUrl("https://api.meteomatics.com/");
 
         String date = TimePartRequest.timeConvert("now");
@@ -86,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("WeatherApp", "Error: " + t.getMessage());
             }
         });
+
+        recreate();
 
     }
     @Override
@@ -141,6 +151,14 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         locationUtils.handlePermissionResult(requestCode, permissions, grantResults);
+    }
+
+    public void setData(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd | HH:mm", Locale.ENGLISH);
+        Date date = new Date();
+        TextView data = findViewById(R.id.data_textView);
+        data.setText(dateFormat.format(date));
+
     }
 
 }
