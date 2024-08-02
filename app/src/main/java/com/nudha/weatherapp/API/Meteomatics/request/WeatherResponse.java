@@ -1,11 +1,7 @@
 package com.nudha.weatherapp.API.Meteomatics.request;
 
-import com.google.gson.annotations.SerializedName;
-
-import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
-import java.util.List;
 
 public class WeatherResponse {
     private String version;
@@ -74,4 +70,3 @@ public class WeatherResponse {
         }
     }
 }
-

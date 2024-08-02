@@ -79,7 +79,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/high_low_temp_TextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="H:27 L:18"
@@ -182,10 +182,10 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/humidity_TextView"
+                        android:id="@+id/uvIndx_TextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Humidity"
+                        android:text="UV index"
                         android:textAlignment="center"
                         android:textColor="@color/white" />
                 </LinearLayout>
