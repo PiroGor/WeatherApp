@@ -9,9 +9,9 @@ public class TempPartRequest {
 
     public static String getTempStats(String statsTemp){
         if(statsTemp.equals("max24H")){
-            return "t_max_2m_24H:C";
+            return "t_max_2m_24h:C";
         }else if(statsTemp.equals("min24H")){
-            return "t_min_2m_24H:C";
+            return "t_min_2m_24h:C";
         }else{
             return temp;
         }

@@ -71,18 +71,18 @@ public class MainActivity extends AppCompatActivity {
         setVariable();
 
         setDataTime();
+        setWeatherNow();
 
-        String savedData = sharedPreferences.getString("tempNow", null);
-        String savedTime = sharedPreferences.getString("timeNow", null);
-        if (savedData != null) {
-            tempNow.setText(savedData);
-        }else{
-            setWeatherNow();
-        }
-
-
+//        String savedData = sharedPreferences.getString("tempNow", null);
+//        String savedCoordinates = sharedPreferences.getString("coordinates", null);
+//        if (savedData != null) {
+//            tempNow.setText(savedData);
+//        }else {
+//            setWeatherNow();
+//        }
 
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         locationUtils.handlePermissionResult(requestCode, permissions, grantResults);
+
     }
 
     public void setDataTime(){
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         //uv:idx - uv index
         //weather_symbol_1h:idx - weather symbol
 
-
+        Log.d("MainActivity","Location: " + LocationPartRequest.getLocationCoordinates());
         ApiService.getInstance().changeBaseUrl("https://api.meteomatics.com/");
 
         String parameters = TempPartRequest.getTemp() + ","
@@ -171,20 +172,23 @@ public class MainActivity extends AppCompatActivity {
         ApiService.getInstance().getWeatherApi().getWeather(TimePartRequest.timeConvert("now"),
                 parameters, LocationPartRequest.getLocationCoordinates()).enqueue(new Callback<WeatherResponse>() {
             @Override
-            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+            public void onResponse(@NonNull Call<WeatherResponse> call, @NonNull Response<WeatherResponse> response) {
+                Log.d("MainActivity", "Response: " + response.code());
+                Log.d("MainActivity", "Response: " + response.message());
+                Log.d("MainActivity", "Call: " + call.request().url().toString());
                 if(response.isSuccessful()){
                     WeatherResponse weatherResponse = response.body();
                     Log.d("MainActivity", "Response: " + weatherResponse);
-
                     if (weatherResponse != null && weatherResponse.getData() != null
                             && !weatherResponse.getData().isEmpty()) {
                         tempNow.setText(setData(weatherResponse, TempPartRequest.getTemp(), "tempNow"));
 
+                        Log.d("MainActivity", "Response body: " + weatherResponse.getData());
                         String highTemp = setData(weatherResponse, TempPartRequest.getTempStats("max24H"), "highTemp");
                         String lowTemp = setData(weatherResponse, TempPartRequest.getTempStats("min24H"), "lowTemp");
-                        String highLowTempString ="H: " + highTemp + " L: " + lowTemp;
+                        String highLowTempString ="H: " + highTemp + "  L: " + lowTemp;
 
-                        highLowTemp.setText("highLowTempString");
+                        highLowTemp.setText(highLowTempString);
                     }
                 }
             }
@@ -198,14 +202,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String setData(WeatherResponse weatherResponse, String parameter, String paramName) {
+        // Получаем данные из ответа
+        Log.d("Param to save", parameter + " " + paramName);
         WeatherResponse.Data data = findParameter(weatherResponse.getData(), parameter);
+        Log.d("Data", String.valueOf(data));
         WeatherResponse.Data.Coordinate coordinate = data.getCoordinates().get(0);
+        Log.d("Coordinate", String.valueOf(coordinate));
         WeatherResponse.Data.Coordinate.DateValue dateValue = coordinate.getDates().get(0);
+        Log.d("DateValue", String.valueOf(dateValue));
 
         // Сохраняем данные в SharedPreferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(paramName, String.valueOf(dateValue.getValue()));
         editor.apply();
+        Log.d("Saved param", String.valueOf(dateValue.getValue()));
 
         return String.valueOf(dateValue.getValue());
     }
