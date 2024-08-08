@@ -51,7 +51,7 @@
                 android:textSize="20sp" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/imageView_now"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_gravity="center"
@@ -109,7 +109,7 @@
                         app:srcCompat="@drawable/rain" />
 
                     <TextView
-                        android:id="@+id/rain_percent_now_TextView"
+                        android:id="@+id/percipitation_now_TextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="2.3mm"
@@ -173,7 +173,7 @@
                         app:srcCompat="@drawable/humidity" />
 
                     <TextView
-                        android:id="@+id/humidity_percent_now_TextView"
+                        android:id="@+id/uvIndx_now_TextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="18%"

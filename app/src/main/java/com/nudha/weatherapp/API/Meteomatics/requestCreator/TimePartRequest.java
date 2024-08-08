@@ -46,10 +46,9 @@ public class TimePartRequest {
     }
 
     private static String next24HRequestConverter(){
+        //2024-08-08T13:00:00ZP1D:PT1H
         return stringBuilder.append(nowTimeConverter())
-                .append("--")
-                .append(requestFormat(nowDateTime.plusHours(24)))
-                .append(":PT1H")
+                .append("P1D:PT1H")
                 .toString();
 
     }

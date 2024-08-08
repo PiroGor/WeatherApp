@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import com.nudha.weatherapp.Adapters.HourlyAdapters;
 import com.nudha.weatherapp.R;
 import com.nudha.weatherapp.permissions.LocationUtils;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,8 +46,11 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private LocationUtils locationUtils;
     private TextView tempNow, highLowTemp,
-            windSpeedNow;
+            percipitation_now, wind_speed, uvIndx;
+    private ImageView iconNow;
     private SharedPreferences sharedPreferences;
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("HH");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,19 +65,23 @@ public class MainActivity extends AppCompatActivity {
 
         tempNow = findViewById(R.id.textView_tempNow);
         highLowTemp = findViewById(R.id.high_low_temp_TextView);
+        percipitation_now = findViewById(R.id.percipitation_now_TextView);
+        wind_speed = findViewById(R.id.wind_speed_now_TextView);
+        uvIndx = findViewById(R.id.uvIndx_now_TextView);
 
 
         locationUtils = new LocationUtils(this);
         locationUtils.requestLocation();
 
 
-        initRecyclerview();
+
 
         setVariable();
 
         setDataTime();
         setWeatherNow();
 
+        initRecyclerview();
 //        String savedData = sharedPreferences.getString("tempNow", null);
 //        String savedCoordinates = sharedPreferences.getString("coordinates", null);
 //        if (savedData != null) {
@@ -117,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
     }
 //адаптировать после now
     private void initRecyclerview(){
+        //https://api.meteomatics.com/2024-08-08T16:00:00ZP1D:PT1H/t_2m:C,weather_symbol_1h:idx/50,10/json
         ArrayList<Hourly> items = new ArrayList<>();
 
         items.add(new Hourly("9 ",23,"cloudy"));
@@ -124,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
         items.add(new Hourly("12 ",26,"wind"));
         items.add(new Hourly("1 ",26,"rainy"));
         items.add(new Hourly("2 ",27,"storm"));
+
 
         recyclerView = findViewById(R.id.view1);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -189,6 +200,13 @@ public class MainActivity extends AppCompatActivity {
                         String highLowTempString ="H: " + highTemp + "  L: " + lowTemp;
 
                         highLowTemp.setText(highLowTempString);
+
+                        percipitation_now.setText(setData(weatherResponse, PrecipitationPartRequest.getPrecipitationPart("1h"), "percipitation_now") + " mm");
+
+                        wind_speed.setText(setData(weatherResponse, WindSpeedPartRequest.getWindSpeedPart(), "wind_speed") + " m/s");
+
+                        uvIndx.setText(setData(weatherResponse, "uv:idx", "uvIndx"));
+
                     }
                 }
             }
@@ -203,19 +221,15 @@ public class MainActivity extends AppCompatActivity {
 
     private String setData(WeatherResponse weatherResponse, String parameter, String paramName) {
         // Получаем данные из ответа
-        Log.d("Param to save", parameter + " " + paramName);
         WeatherResponse.Data data = findParameter(weatherResponse.getData(), parameter);
-        Log.d("Data", String.valueOf(data));
         WeatherResponse.Data.Coordinate coordinate = data.getCoordinates().get(0);
-        Log.d("Coordinate", String.valueOf(coordinate));
         WeatherResponse.Data.Coordinate.DateValue dateValue = coordinate.getDates().get(0);
-        Log.d("DateValue", String.valueOf(dateValue));
 
         // Сохраняем данные в SharedPreferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(paramName, String.valueOf(dateValue.getValue()));
         editor.apply();
-        Log.d("Saved param", String.valueOf(dateValue.getValue()));
+        Log.d("Saved param", String.valueOf(editor));
 
         return String.valueOf(dateValue.getValue());
     }
