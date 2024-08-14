@@ -12,6 +12,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.nudha.weatherapp.API.Meteomatics.requestCreator.WeatherRequest;
+import com.nudha.weatherapp.Activities.SplashScreenActivity;
 
 
 public class LocationUtils {
@@ -60,6 +61,9 @@ public class LocationUtils {
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
+                            WeatherRequest.setLocation(location.getLatitude(), location.getLongitude());
+
+                        }else{
                             double latitude = location.getLatitude();
                             double longitude = location.getLongitude();
                             WeatherRequest.setLocation(latitude, longitude);
@@ -67,5 +71,6 @@ public class LocationUtils {
                     }
                 });
     }
+
 
 }

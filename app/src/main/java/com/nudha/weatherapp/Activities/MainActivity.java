@@ -17,38 +17,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.nudha.weatherapp.API.Meteomatics.request.ApiService;
-import com.nudha.weatherapp.API.Meteomatics.request.WeatherResponse;
-import com.nudha.weatherapp.API.Meteomatics.requestCreator.LocationPartRequest;
-import com.nudha.weatherapp.API.Meteomatics.requestCreator.PrecipitationPartRequest;
-import com.nudha.weatherapp.API.Meteomatics.requestCreator.TempPartRequest;
-import com.nudha.weatherapp.API.Meteomatics.requestCreator.TimePartRequest;
-import com.nudha.weatherapp.API.Meteomatics.requestCreator.WindSpeedPartRequest;
 import com.nudha.weatherapp.Domains.Hourly;
 import com.nudha.weatherapp.Adapters.HourlyAdapters;
 import com.nudha.weatherapp.R;
 import com.nudha.weatherapp.permissions.LocationUtils;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterHourly;
     private RecyclerView recyclerView;
-    private LocationUtils locationUtils;    //*******
-    private TextView tempNow, highLowTemp,
+    private TextView tempNow, highTemp, lowTemp,
             percipitation_now, wind_speed, uvIndx;
     private ImageView iconNow;
-    private SharedPreferences sharedPreferences;    //*******
+    private SharedPreferences sharedPreferences;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("HH");
 
@@ -57,14 +42,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE); //*******
+        sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setPopupTheme(R.style.MyMenuTheme);
 
         tempNow = findViewById(R.id.textView_tempNow);
-        highLowTemp = findViewById(R.id.high_low_temp_TextView);
+        highTemp = findViewById(R.id.highTempTxt);
+        lowTemp = findViewById(R.id.low_temp_TextView);
         percipitation_now = findViewById(R.id.percipitation_now_TextView);
         wind_speed = findViewById(R.id.wind_speed_now_TextView);
         uvIndx = findViewById(R.id.uvIndx_now_TextView);
@@ -76,14 +62,20 @@ public class MainActivity extends AppCompatActivity {
         setWeatherNow();
 
         initRecyclerview();
-//        String savedData = sharedPreferences.getString("tempNow", null);
-//        String savedCoordinates = sharedPreferences.getString("coordinates", null);
-//        if (savedData != null) {
-//            tempNow.setText(savedData);
-//        }else {
-//            setWeatherNow();
-//        }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sharedPreferences != null) {
+            for (String key : sharedPreferences.getAll().keySet()) {
+                String value = sharedPreferences.getString(key, null);
+                if (value != null) {
+                    setWeatherMain(value, key);
+                }
+            }
+        }
     }
 
     @Override
@@ -150,26 +142,31 @@ public class MainActivity extends AppCompatActivity {
         if (extras != null) {
             for (String key : extras.keySet()) {
                 Object value = extras.get(key);
-                // Используйте ключ и значение как вам нужно
-                Log.d("NextActivity", "Key: " + key + " Value: " + value);
+                sharedPreferences.edit().putString(key, value.toString()).apply();
+                setWeatherMain(value.toString(), key);
             }
+        }else{
+            Log.d("MainActivity", "No extras found");
         }
     }
 
-//    private String setData(WeatherResponse weatherResponse, String parameter, String paramName) {
-//        // Получаем данные из ответа
-//        WeatherResponse.Data data = findParameter(weatherResponse.getData(), parameter);
-//        WeatherResponse.Data.Coordinate coordinate = data.getCoordinates().get(0);
-//        WeatherResponse.Data.Coordinate.DateValue dateValue = coordinate.getDates().get(0);
-//
-//        // Сохраняем данные в SharedPreferences
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.putString(paramName, String.valueOf(dateValue.getValue()));
-//        editor.apply();
-//        Log.d("Saved param", String.valueOf(editor));
-//
-//        return String.valueOf(dateValue.getValue());
-//    }
+    private void setWeatherMain(String value, String key){
+        if (key.equals("tempNow")) {
+            tempNow.setText(value.toString());
+        }else if(key.equals("highTemp")){
+            highTemp.setText("H: " + value.toString());
+        }else if(key.equals("lowTemp")){
+            lowTemp.setText(" L: " + value.toString());
+        }else if(key.equals("percipitation_now")){
+            percipitation_now.setText(value.toString());
+        }else if(key.equals("wind_speed")){
+            wind_speed.setText(value.toString());
+        }else if(key.equals("uvIndx")){
+            uvIndx.setText(value.toString());
+        }
+    }
+
+
 
 
 

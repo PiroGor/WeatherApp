@@ -43,11 +43,13 @@ public class SplashScreenActivity extends AppCompatActivity {
         locationUtils = new LocationUtils(this);
         locationUtils.requestLocation();
 
-        saveWeatherData();
+
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                saveWeatherData();
+
                 Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
                 Map<String, ?> allEntries = sharedPreferences.getAll();
                 for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
@@ -73,7 +75,6 @@ public class SplashScreenActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         locationUtils.handlePermissionResult(requestCode, permissions, grantResults);
-
     }
 
 
@@ -87,6 +88,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     //uv:idx - uv index
     //weather_symbol_1h:idx - weather symbol
     public void saveWeatherData(){
+        Log.d("Splash", LocationPartRequest.getLocationCoordinates());
         ApiService.getInstance().changeBaseUrl("https://api.meteomatics.com/");
 
         String parameters = TempPartRequest.getTemp() + ","
@@ -116,6 +118,10 @@ public class SplashScreenActivity extends AppCompatActivity {
                         setData(weatherResponse, WindSpeedPartRequest.getWindSpeedPart(), "wind_speed");
 
                         setData(weatherResponse, "uv:idx", "uvIndx");
+                        setData(weatherResponse, "weather_symbol_1h:idx", "iconNow");
+
+                        Log.d("Splash", "End of SplashScreenActivity");
+
 
                     }
                 }
@@ -128,6 +134,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         });
 
     }
+
 
     private void setData(WeatherResponse weatherResponse, String parameter, String paramName) {
         // Получаем данные из ответа
