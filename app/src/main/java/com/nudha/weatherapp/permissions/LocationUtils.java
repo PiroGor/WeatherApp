@@ -2,13 +2,19 @@ package com.nudha.weatherapp.permissions;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.nudha.weatherapp.API.Meteomatics.requestCreator.WeatherRequest;
@@ -26,7 +32,9 @@ public class LocationUtils {
 
     public void requestLocation() {
         if (PermissionUtils.checkAndRequestPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSION_REQUEST_CODE)) {
-            getLocation();
+            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                getLocation();
+            }
         }
     }
 
@@ -45,6 +53,33 @@ public class LocationUtils {
     }
 
     private void getLocation() {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Запросите недостающие разрешения, если это необходимо
+            return;
+        }
+
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        Log.d("Location", "Location: " + location);
+                        if (location != null) {
+                            double latitude = location.getLatitude();
+                            double longitude = location.getLongitude();
+                            WeatherRequest.setLocation(latitude, longitude);
+                        } else {
+                            // Если getLastLocation вернул null, запросим обновление местоположения
+                            requestNewLocationData();
+                        }
+                    }
+                });
+    }
+
+    private void requestNewLocationData() {
+        LocationRequest locationRequest = LocationRequest.create();
+         // Получаем только одно обновление местоположения
+
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -53,19 +88,30 @@ public class LocationUtils {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return ;
+            return;
         }
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            double latitude = location.getLatitude();
-                            double longitude = location.getLongitude();
-                            WeatherRequest.setLocation(latitude, longitude);
-                        }
-                    }
-                });
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
+
+    private LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            if (locationResult == null) {
+                Toast.makeText(activity, "Unable to get location. Using default.", Toast.LENGTH_SHORT).show();
+                // Используем координаты по умолчанию
+                WeatherRequest.setLocation(50, 10);
+                return;
+            }
+            Location location = locationResult.getLastLocation();
+            if (location != null) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                WeatherRequest.setLocation(latitude, longitude);
+            } else {
+                Toast.makeText(activity, "Location is null after request. Using default.", Toast.LENGTH_SHORT).show();
+                WeatherRequest.setLocation(50, 10);
+            }
+        }
+    };
 
 }

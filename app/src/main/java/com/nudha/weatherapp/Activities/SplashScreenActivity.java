@@ -48,8 +48,11 @@ public class SplashScreenActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+                Log.d("Splash", "Run");
+
+                Log.d("Shared pref", String.valueOf(sharedPreferences));
                 Map<String, ?> allEntries = sharedPreferences.getAll();
+                Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
                 for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
                     // Определяем тип данных и передаем в Intent
                     if (entry.getValue() instanceof String) {
@@ -74,6 +77,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         locationUtils.handlePermissionResult(requestCode, permissions, grantResults);
 
+
     }
 
 
@@ -87,6 +91,8 @@ public class SplashScreenActivity extends AppCompatActivity {
     //uv:idx - uv index
     //weather_symbol_1h:idx - weather symbol
     public void saveWeatherData(){
+        Log.d("Splash", "Save");
+        Log.d("Location", LocationPartRequest.getLocationCoordinates());
         ApiService.getInstance().changeBaseUrl("https://api.meteomatics.com/");
 
         String parameters = TempPartRequest.getTemp() + ","
@@ -95,11 +101,16 @@ public class SplashScreenActivity extends AppCompatActivity {
                 + PrecipitationPartRequest.getPrecipitationPart("1h") + ","
                 + WindSpeedPartRequest.getWindSpeedPart() + ","
                 + "uv:idx" + "," + "weather_symbol_1h:idx" ;
+        Log.d("Splash", "Parameters: " + parameters);
 
         ApiService.getInstance().getWeatherApi().getWeather(TimePartRequest.timeConvert("now"),
-                parameters, LocationPartRequest.getLocationCoordinates()).enqueue(new Callback<WeatherResponse>() {
+                parameters, "50,10").enqueue(new Callback<WeatherResponse>() {
             @Override
             public void onResponse(@NonNull Call<WeatherResponse> call, @NonNull Response<WeatherResponse> response) {
+                Log.d("MainActivity", "Response code: " + response.code());
+                Log.d("MainActivity", "Response message: " + response.message());
+                Log.d("MainActivity", "Response body:" + response.body());
+                Log.d("MainActivity", "http" + response.raw().request().url());
                 if(response.isSuccessful()){
                     WeatherResponse weatherResponse = response.body();
                     Log.d("MainActivity", "Response: " + weatherResponse);

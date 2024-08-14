@@ -17,29 +17,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.nudha.weatherapp.API.Meteomatics.request.ApiService;
-import com.nudha.weatherapp.API.Meteomatics.request.WeatherResponse;
-import com.nudha.weatherapp.API.Meteomatics.requestCreator.LocationPartRequest;
-import com.nudha.weatherapp.API.Meteomatics.requestCreator.PrecipitationPartRequest;
-import com.nudha.weatherapp.API.Meteomatics.requestCreator.TempPartRequest;
-import com.nudha.weatherapp.API.Meteomatics.requestCreator.TimePartRequest;
-import com.nudha.weatherapp.API.Meteomatics.requestCreator.WindSpeedPartRequest;
 import com.nudha.weatherapp.Domains.Hourly;
 import com.nudha.weatherapp.Adapters.HourlyAdapters;
 import com.nudha.weatherapp.R;
 import com.nudha.weatherapp.permissions.LocationUtils;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterHourly;
@@ -148,28 +134,29 @@ public class MainActivity extends AppCompatActivity {
     public void setWeatherNow(){
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
+            String highLow = "";
             for (String key : extras.keySet()) {
                 Object value = extras.get(key);
                 // Используйте ключ и значение как вам нужно
                 Log.d("NextActivity", "Key: " + key + " Value: " + value);
-            }
+
+                if(key.equals("tempNow")){
+                    tempNow.setText(value.toString());
+                } else if(key.equals("highTemp")){
+                    highLow = highLow + "H: " + value.toString();
+                } else if(key.equals("lowTemp")){
+                    highLow = highLow + " L: " + value.toString();
+                }else if(key.equals("percipitation_now")){
+                    percipitation_now.setText(value.toString());
+                }else if(key.equals("wind_speed")){
+                    wind_speed.setText(value.toString());
+                }else if(key.equals("uvIndx")){
+                    uvIndx.setText(value.toString());
+                }
+            }highLowTemp.setText(highLow);
         }
     }
 
-//    private String setData(WeatherResponse weatherResponse, String parameter, String paramName) {
-//        // Получаем данные из ответа
-//        WeatherResponse.Data data = findParameter(weatherResponse.getData(), parameter);
-//        WeatherResponse.Data.Coordinate coordinate = data.getCoordinates().get(0);
-//        WeatherResponse.Data.Coordinate.DateValue dateValue = coordinate.getDates().get(0);
-//
-//        // Сохраняем данные в SharedPreferences
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.putString(paramName, String.valueOf(dateValue.getValue()));
-//        editor.apply();
-//        Log.d("Saved param", String.valueOf(editor));
-//
-//        return String.valueOf(dateValue.getValue());
-//    }
 
 
 
