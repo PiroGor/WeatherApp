@@ -1,7 +1,6 @@
 package com.nudha.weatherapp.Activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -20,8 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.nudha.weatherapp.Domains.Hourly;
 import com.nudha.weatherapp.Adapters.HourlyAdapters;
 import com.nudha.weatherapp.R;
-import com.nudha.weatherapp.permissions.LocationUtils;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,16 +34,16 @@ public class MainActivity extends AppCompatActivity {
     private TextView tempNow, highTemp, lowTemp,
             percipitation_now, wind_speed, uvIndx;
     private ImageView iconNow;
-    private SharedPreferences sharedPreferences;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("HH");
+
+    private static final String FILE_NAME = "weather_data.txt";
+    private static final String FILE_NAME_24H = "weather_data_24H.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,14 +69,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (sharedPreferences != null) {
-            for (String key : sharedPreferences.getAll().keySet()) {
-                String value = sharedPreferences.getString(key, null);
-                if (value != null) {
-                    setWeatherMain(value, key);
-                }
-            }
-        }
+        setWeatherNow();
     }
 
     @Override
@@ -110,23 +104,44 @@ public class MainActivity extends AppCompatActivity {
         next7days_btn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, FutureActivity.class))
         );
     }
-//адаптировать после now
+//адаптировать после now TODO
     private void initRecyclerview(){
         //https://api.meteomatics.com/2024-08-08T16:00:00ZP1D:PT1H/t_2m:C,weather_symbol_1h:idx/50,10/json
-        ArrayList<Hourly> items = new ArrayList<>();
-
-        items.add(new Hourly("9 ",23,"cloudy"));
-        items.add(new Hourly("11 ",24,"sunny"));
-        items.add(new Hourly("12 ",26,"wind"));
-        items.add(new Hourly("1 ",26,"rainy"));
-        items.add(new Hourly("2 ",27,"storm"));
-
+        ArrayList<Hourly> items = getHourlyArrayList();
 
         recyclerView = findViewById(R.id.view1);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         adapterHourly = new HourlyAdapters(items);
         recyclerView.setAdapter(adapterHourly);
+    }
+
+    private ArrayList<Hourly> getHourlyArrayList(){
+        Log.d("MainActivity", "Get Hourly ArrayList method called");
+        ArrayList<Hourly> items = new ArrayList<>();
+
+        String weatherData24H = readFromFile(FILE_NAME_24H);
+
+        if (weatherData24H != null) {
+            String[] lines = weatherData24H.split("\n");
+            for (String line : lines) {
+                String[] parts = line.split("; ");
+                if (parts.length == 3) {
+                    String time = parts[0];
+                    String temperature = parts[1];
+                    Double temp = Double.parseDouble(temperature);
+                    String icon = parts[2];
+                    items.add(new Hourly(time.substring(11,13)+":00", temp, icon));
+                }else {
+                    Log.d("MainActivity", "No weather data found");
+                }
+            }
+        }
+        if (weatherData24H == null || weatherData24H.isEmpty()) {
+            Log.d("MainActivity", "No weather data for 24H found");
+            return items;
+        }
+        return items;
     }
 
     public void setDataTime(){
@@ -138,36 +153,56 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setWeatherNow(){
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            for (String key : extras.keySet()) {
-                Object value = extras.get(key);
-                sharedPreferences.edit().putString(key, value.toString()).apply();
-                setWeatherMain(value.toString(), key);
+        Log.d("MainActivity", "Set Weather Now method called");
+        String weatherData = readFromFile(FILE_NAME);
+
+        if (weatherData != null) {
+            String[] lines = weatherData.split("\n");
+
+            for (String line : lines) {
+                String[] parts = line.split(": ");
+                if (parts.length == 2) {
+                    String key = parts[0];
+                    String value = parts[1];
+                    setWeatherMain(value, key);
+                }
             }
-        }else{
-            Log.d("MainActivity", "No extras found");
+        }else {
+            Log.d("MainActivity", "No weather data found");
         }
+    }
+
+    private String readFromFile(String fileName) {
+        // Читаем данные из файла
+        Log.d("MainActivity", "Reading data from file");
+        StringBuilder data = new StringBuilder();
+        try (FileInputStream fis = openFileInput(fileName);
+             InputStreamReader isr = new InputStreamReader(fis);
+             BufferedReader br = new BufferedReader(isr)) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                data.append(line).append("\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data.toString();
     }
 
     private void setWeatherMain(String value, String key){
+        Log.d("MainActivity", "Set Weather Main method called");
         if (key.equals("tempNow")) {
-            tempNow.setText(value.toString());
+            tempNow.setText(value + "°");
         }else if(key.equals("highTemp")){
-            highTemp.setText("H: " + value.toString());
+            highTemp.setText("H: " + value + "°");
         }else if(key.equals("lowTemp")){
-            lowTemp.setText(" L: " + value.toString());
+            lowTemp.setText(" L: " + value + "°");
         }else if(key.equals("percipitation_now")){
-            percipitation_now.setText(value.toString());
+            percipitation_now.setText(value + "mm");
         }else if(key.equals("wind_speed")){
-            wind_speed.setText(value.toString());
+            wind_speed.setText(value + "m/s");
         }else if(key.equals("uvIndx")){
-            uvIndx.setText(value.toString());
+            uvIndx.setText(value);
         }
     }
-
-
-
-
-
 }
