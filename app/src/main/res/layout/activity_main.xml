@@ -51,7 +51,7 @@
                 android:textSize="20sp" />
 
             <ImageView
-                android:id="@+id/imageView_now"
+                android:id="@+id/weather_status_now_img"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_gravity="center"

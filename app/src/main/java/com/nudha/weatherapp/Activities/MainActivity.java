@@ -1,6 +1,7 @@
 package com.nudha.weatherapp.Activities;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -22,6 +23,8 @@ import com.nudha.weatherapp.R;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("HH");
 
-    private static final String FILE_NAME = "weather_data.txt";
-    private static final String FILE_NAME_24H = "weather_data_24H.txt";
+    private static final String WEATHER_DATA = "weather_data.txt";
+    private static final String WEATHER_DATA_24_H = "weather_data_24H.txt";
+    private static final String WEATHER_STATUS_ICONS = "weather_status_icons.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,10 +121,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ArrayList<Hourly> getHourlyArrayList(){
-        Log.d("MainActivity", "Get Hourly ArrayList method called");
+        //Log.d("MainActivity", "Get Hourly ArrayList method called");
         ArrayList<Hourly> items = new ArrayList<>();
 
-        String weatherData24H = readFromFile(FILE_NAME_24H);
+        String weatherData24H = readFromFile(WEATHER_DATA_24_H);
 
         if (weatherData24H != null) {
             String[] lines = weatherData24H.split("\n");
@@ -130,7 +134,9 @@ public class MainActivity extends AppCompatActivity {
                     String time = parts[0];
                     String temperature = parts[1];
                     Double temp = Double.parseDouble(temperature);
-                    String icon = parts[2];
+                    String icon_status = parts[2];
+                    //Log.d("MainActivity", "Icon Status: " + icon_status);
+                    String icon = getIcon(icon_status);
                     items.add(new Hourly(time.substring(11,13)+":00", temp, icon));
                 }else {
                     Log.d("MainActivity", "No weather data found");
@@ -144,6 +150,53 @@ public class MainActivity extends AppCompatActivity {
         return items;
     }
 
+    private String getIcon(String iconStatus) {
+        Log.d("MainActivity", "Get Icon method called");
+
+        // Получаем InputStream для файла
+        InputStream inputStream = getResources().openRawResource(R.raw.weather_status_icons);
+
+        // Читаем содержимое файла
+        String iconPath = readFromFileInputStreamType(inputStream);
+
+        if (iconPath != null && !iconPath.isEmpty()) {
+            String[] parts = iconPath.split("\n");
+
+            for (String part : parts) {
+                String[] icon = part.split("; ");
+                if (iconStatus.equals(icon[0]) || iconStatus.equals(icon[1])) {
+                    return icon[2];  // Возвращаем иконку
+                }
+            }
+
+            Log.d("MainActivity", "No weather data found for the given status");
+            Log.d("MainActivity", "Status: " + iconStatus);
+            return "0";
+        }
+
+        Log.d("MainActivity", "No weather data for 24H found");
+        return "0";
+    }
+
+    private String readFromFileInputStreamType(InputStream inputStream) {
+        StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append("\n");
+            }
+            reader.close();
+        } catch (IOException e) {
+            Log.e("MainActivity", "Error reading file", e);
+        }
+
+        return stringBuilder.toString();
+    }
+
+
+
     public void setDataTime(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd | HH:mm", Locale.ENGLISH);
         Date date = new Date();
@@ -153,8 +206,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setWeatherNow(){
-        Log.d("MainActivity", "Set Weather Now method called");
-        String weatherData = readFromFile(FILE_NAME);
+        //Log.d("MainActivity", "Set Weather Now method called");
+        String weatherData = readFromFile(WEATHER_DATA);
 
         if (weatherData != null) {
             String[] lines = weatherData.split("\n");
@@ -174,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String readFromFile(String fileName) {
         // Читаем данные из файла
-        Log.d("MainActivity", "Reading data from file");
+        //Log.d("MainActivity", "Reading data from file");
         StringBuilder data = new StringBuilder();
         try (FileInputStream fis = openFileInput(fileName);
              InputStreamReader isr = new InputStreamReader(fis);
@@ -190,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setWeatherMain(String value, String key){
-        Log.d("MainActivity", "Set Weather Main method called");
+        //Log.d("MainActivity", "Set Weather Main method called");
         if (key.equals("tempNow")) {
             tempNow.setText(value + "°");
         }else if(key.equals("highTemp")){
@@ -203,6 +256,16 @@ public class MainActivity extends AppCompatActivity {
             wind_speed.setText(value + "m/s");
         }else if(key.equals("uvIndx")){
             uvIndx.setText(value);
+        }else if(key.equals("iconNow")){
+            iconNow = findViewById(R.id.weather_status_now_img);
+            String icon = getIcon(value);
+            int drawableId = getResources().getIdentifier(icon, "drawable", getPackageName());
+            if (drawableId != 0) {  // Проверяем, что ресурс найден
+                // Устанавливаем Drawable на ImageView
+                iconNow.setImageResource(drawableId);
+            } else {
+                Log.e("MainActivity", "Drawable not found");
+            }
         }
     }
 }

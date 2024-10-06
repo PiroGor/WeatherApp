@@ -1,0 +1,17 @@
+0; 0; A weather symbol could not be determined
+1; 101; Clear sky
+2; 102; Light clouds
+3; 103; Partly cloudy
+4; 104; Cloudy
+5; 105; Rain
+6; 106; Rain and snow
+7; 107; Snow
+8; 108; Rain shower
+9; 109; Snow shower
+10; 110; Sleet shower
+11; 111; Light Fog
+12; 112; Dense fog
+13; 113; Freezing rain
+14; 114; Thunderstorms
+15; 115; Drizzle
+16; 116; Sandstorm

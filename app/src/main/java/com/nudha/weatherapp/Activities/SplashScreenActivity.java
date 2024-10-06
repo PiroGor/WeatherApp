@@ -33,8 +33,8 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private static int SPLASH_TIME_OUT = 3000; // 3 seconds
     private LocationUtils locationUtils;
-    private static final String FILE_NAME = "weather_data.txt";
-    private static final String FILE_NAME_24H = "weather_data_24H.txt";
+    private static final String WEATHER_NOW = "weather_data.txt";
+    private static final String WEATHER_24H = "weather_data_24H.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     public void saveWeatherDataFor24H(){
-        Log.d("Splash","24H Weather");
+        //Log.d("Splash","24H Weather");
         ApiService.getInstance().changeBaseUrl("https://api.meteomatics.com/");
 
         String parameters = TempPartRequest.getTemp() + "," + "weather_symbol_1h:idx";
@@ -88,10 +88,10 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     private void saveToFileFor24H(String data) throws IOException {
-        FileOutputStream fos = openFileOutput(FILE_NAME_24H, Context.MODE_PRIVATE);
+        FileOutputStream fos = openFileOutput(WEATHER_24H, Context.MODE_PRIVATE);
         fos.write(data.getBytes());
         fos.close();
-        Log.d("SplashScreenActivity", "24H Data saved to file");
+        //Log.d("SplashScreenActivity", "24H Data saved to file");
     }
 
     private String collectWeatherDataFor24H(WeatherResponse weatherResponse) {
@@ -149,7 +149,9 @@ public class SplashScreenActivity extends AppCompatActivity {
                         }
                     }
                 }
+                Log.d("Splash", "Response: " + response);
             }
+
 
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
@@ -161,10 +163,10 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     // Сохранение данных в файл
     private void saveToFile(String data) throws IOException {
-        FileOutputStream fos = openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
+        FileOutputStream fos = openFileOutput(WEATHER_NOW, Context.MODE_PRIVATE);
         fos.write(data.getBytes());
         fos.close();
-        Log.d("SplashScreenActivity", "Data saved to file");
+       // Log.d("SplashScreenActivity", "Data saved to file");
     }
 
     // Форматирование данных для записи в файл
