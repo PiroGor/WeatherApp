@@ -1,13 +1,13 @@
 0; 0; A weather symbol could not be determined
-1; 101; Clear sky
-2; 102; Light clouds
-3; 103; Partly cloudy
-4; 104; Cloudy
-5; 105; Rain
+1; 101; sunny
+2; 102; cloudy_sunny
+3; 103; cloudy_sunny
+4; 104; cloudy
+5; 105; rain
 6; 106; Rain and snow
-7; 107; Snow
-8; 108; Rain shower
-9; 109; Snow shower
+7; 107; snow
+8; 108; rainy
+9; 109; snowy
 10; 110; Sleet shower
 11; 111; Light Fog
 12; 112; Dense fog

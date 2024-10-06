@@ -164,7 +164,12 @@ public class MainActivity extends AppCompatActivity {
 
             for (String part : parts) {
                 String[] icon = part.split("; ");
-                if (iconStatus.equals(icon[0]) || iconStatus.equals(icon[1])) {
+                Double iconDouble = Double.parseDouble(iconStatus);
+                int iconInt = iconDouble.intValue();
+                Log.d("MainActivity", "Icon int: " + iconInt);
+                String iconStr = iconInt +"";
+
+                if (iconStr.equals(icon[0]) || iconStr.equals(icon[1])) {
                     return icon[2];  // Возвращаем иконку
                 }
             }
@@ -259,13 +264,13 @@ public class MainActivity extends AppCompatActivity {
         }else if(key.equals("iconNow")){
             iconNow = findViewById(R.id.weather_status_now_img);
             String icon = getIcon(value);
-            int drawableId = getResources().getIdentifier(icon, "drawable", getPackageName());
-            if (drawableId != 0) {  // Проверяем, что ресурс найден
-                // Устанавливаем Drawable на ImageView
-                iconNow.setImageResource(drawableId);
-            } else {
-                Log.e("MainActivity", "Drawable not found");
-            }
+//            int drawableId = getResources().getIdentifier(icon, "drawable", getPackageName());
+//            if (drawableId != 0) {  // Проверяем, что ресурс найден
+//                // Устанавливаем Drawable на ImageView
+//                iconNow.setImageResource(drawableId);
+//            } else {
+//                Log.e("MainActivity", "Drawable not found");
+//            }
         }
     }
 }
