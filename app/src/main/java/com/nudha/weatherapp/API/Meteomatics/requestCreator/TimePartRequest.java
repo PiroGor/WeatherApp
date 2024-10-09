@@ -1,4 +1,4 @@
-package com.nudha.weatherapp.API.Meteomatics;
+package com.nudha.weatherapp.API.Meteomatics.requestCreator;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,12 +25,6 @@ public class TimePartRequest {
         }else if (period.equalsIgnoreCase("7dayshigh")){
             stringBuilder.delete(0,stringBuilder.length());
             return next7DaysRequestConverter(highTimeTemp);
-        }else if(period.equalsIgnoreCase("last30dayslow")){
-            stringBuilder.delete(0,stringBuilder.length());
-            return previousTimeRequestConverter(30, lowTimeTemp);
-        }else if (period.equalsIgnoreCase("last30dayshigh")){
-            stringBuilder.delete(0,stringBuilder.length());
-            return previousTimeRequestConverter(30,highTimeTemp);
         }else{
             return "You chose wrong time";
         }
@@ -52,10 +46,9 @@ public class TimePartRequest {
     }
 
     private static String next24HRequestConverter(){
+        //2024-08-08T13:00:00ZP1D:PT1H
         return stringBuilder.append(nowTimeConverter())
-                .append("--")
-                .append(requestFormat(nowDateTime.plusHours(24)))
-                .append(":PT1H")
+                .append("P1D:PT1H")
                 .toString();
 
     }

@@ -1,4 +1,4 @@
-package com.nudha.weatherapp.API.Meteomatics;
+package com.nudha.weatherapp.API.Meteomatics.requestCreator;
 
 public class PrecipitationPartRequest {
     private static final String PRECIPPER24H ="precip_24h:mm";

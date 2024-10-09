@@ -51,7 +51,7 @@
                 android:textSize="20sp" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/weather_status_now_img"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_gravity="center"
@@ -59,7 +59,7 @@
                 app:srcCompat="@drawable/cloudy_sunny" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/data_textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -69,7 +69,7 @@
                 android:textSize="19sp" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/textView_tempNow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="25°"
@@ -78,14 +78,31 @@
                 android:textSize="63dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textView4"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="H:27 L:18"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/highTempTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="H: 34"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/low_temp_TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="  L:18"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -109,7 +126,7 @@
                         app:srcCompat="@drawable/rain" />
 
                     <TextView
-                        android:id="@+id/rain_percent_TextView"
+                        android:id="@+id/percipitation_now_TextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="2.3mm"
@@ -141,7 +158,7 @@
                         app:srcCompat="@drawable/wind" />
 
                     <TextView
-                        android:id="@+id/wind_speed_TextView"
+                        android:id="@+id/wind_speed_now_TextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="21 km/h"
@@ -173,7 +190,7 @@
                         app:srcCompat="@drawable/humidity" />
 
                     <TextView
-                        android:id="@+id/humidity_percent_TextView"
+                        android:id="@+id/uvIndx_now_TextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="18%"
@@ -182,10 +199,10 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/humidity_TextView"
+                        android:id="@+id/uvIndx_TextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Humidity"
+                        android:text="UV index"
                         android:textAlignment="center"
                         android:textColor="@color/white" />
                 </LinearLayout>

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nudha.weatherapp">
-
     <!-- Permissions -->
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -15,21 +14,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherApp">
-
-        <!-- MainActivity -->
-        <activity android:name=".Activities.MainActivity"
+        <activity
+            android:name=".Activities.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- FutureActivity -->
-        <activity android:name=".Activities.FutureActivity"/>
-        <activity android:name=".Activities.ArchiveActivity"/>
-        <activity android:name=".Activities.InfoActivity"/>
-
+        <!-- MainActivity -->
+        </activity> <!-- FutureActivity -->
+        <activity android:name=".Activities.MainActivity" />
+        <activity android:name=".Activities.FutureActivity" />
+        <activity android:name=".Activities.ArchiveActivity" />
+        <activity android:name=".Activities.InfoActivity" />
     </application>
 
 </manifest>

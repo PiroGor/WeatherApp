@@ -1,4 +1,4 @@
-package com.nudha.weatherapp.API.Meteomatics;
+package com.nudha.weatherapp.API.Meteomatics.requestCreator;
 
 public class WindSpeedPartRequest {
     private static final String WINDSPEED = "wind_speed_10m:ms";

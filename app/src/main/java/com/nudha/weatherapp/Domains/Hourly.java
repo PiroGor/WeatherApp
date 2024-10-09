@@ -2,10 +2,10 @@ package com.nudha.weatherapp.Domains;
 
 public class Hourly {
     private String hour;
-    private int temp;
+    private Double temp;
     private String picPath;
 
-    public Hourly(String hour, int temp, String picPath) {
+    public Hourly(String hour, double temp, String picPath) {
         this.hour = hour;
         this.temp = temp;
         this.picPath = picPath;
@@ -19,11 +19,11 @@ public class Hourly {
         this.hour = hour;
     }
 
-    public int getTemp() {
+    public double getTemp() {
         return temp;
     }
 
-    public void setTemp(int temp) {
+    public void setTemp(double temp) {
         this.temp = temp;
     }
 

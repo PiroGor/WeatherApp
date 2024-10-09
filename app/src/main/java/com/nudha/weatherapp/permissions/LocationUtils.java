@@ -11,8 +11,8 @@ import androidx.core.app.ActivityCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.nudha.weatherapp.API.Meteomatics.LocationPartRequest;
-import com.nudha.weatherapp.API.Meteomatics.WeatherRequest;
+import com.nudha.weatherapp.API.Meteomatics.requestCreator.WeatherRequest;
+
 
 
 public class LocationUtils {
@@ -54,20 +54,23 @@ public class LocationUtils {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+            return ;
         }
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
+                            WeatherRequest.setLocation(location.getLatitude(), location.getLongitude());
+
+                        }else{
                             double latitude = location.getLatitude();
                             double longitude = location.getLongitude();
                             WeatherRequest.setLocation(latitude, longitude);
-                            Toast.makeText(activity, "Lat: " + latitude + ", Lng: " + longitude, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
+
 
 }
