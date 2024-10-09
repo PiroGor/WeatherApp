@@ -29,7 +29,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/cloudy_sunny" />
+            app:srcCompat="@drawable/sunny" />
 
         <TextView
             android:id="@+id/tempTxt"

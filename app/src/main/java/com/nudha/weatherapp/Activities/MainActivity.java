@@ -133,9 +133,9 @@ public class MainActivity extends AppCompatActivity {
                 if (parts.length == 3) {
                     String time = parts[0];
                     String temperature = parts[1];
-                    Double temp = Double.parseDouble(temperature);
+                    double temp = Double.parseDouble(temperature);
                     String icon_status = parts[2];
-                    //Log.d("MainActivity", "Icon Status: " + icon_status);
+                    Log.d("MainActivity", "Icon Status: " + icon_status);
                     String icon = getIcon(icon_status);
                     items.add(new Hourly(time.substring(11,13)+":00", temp, icon));
                 }else {
@@ -166,11 +166,11 @@ public class MainActivity extends AppCompatActivity {
                 String[] icon = part.split("; ");
                 Double iconDouble = Double.parseDouble(iconStatus);
                 int iconInt = iconDouble.intValue();
-                Log.d("MainActivity", "Icon int: " + iconInt);
+                //Log.d("MainActivity", "Icon int: " + iconInt);
                 String iconStr = iconInt +"";
 
-                if (iconStr.equals(icon[0]) || iconStr.equals(icon[1])) {
-                    return icon[2];  // Возвращаем иконку
+                if (iconStr.equals(icon[0])) {
+                    return icon[1];  // Возвращаем иконку
                 }
             }
 
@@ -264,13 +264,13 @@ public class MainActivity extends AppCompatActivity {
         }else if(key.equals("iconNow")){
             iconNow = findViewById(R.id.weather_status_now_img);
             String icon = getIcon(value);
-//            int drawableId = getResources().getIdentifier(icon, "drawable", getPackageName());
-//            if (drawableId != 0) {  // Проверяем, что ресурс найден
-//                // Устанавливаем Drawable на ImageView
-//                iconNow.setImageResource(drawableId);
-//            } else {
-//                Log.e("MainActivity", "Drawable not found");
-//            }
+            int drawableId = getResources().getIdentifier(icon, "drawable", getPackageName());
+            if (drawableId != 0) {  // Проверяем, что ресурс найден
+                // Устанавливаем Drawable на ImageView
+                iconNow.setImageResource(drawableId);
+            } else {
+                Log.e("MainActivity", "Drawable not found");
+            }
         }
     }
 }
