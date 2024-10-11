@@ -1,13 +1,12 @@
-0;
 0; A weather symbol could not be determined
-1; sunny
-101; clear_sky
+1; sunny_day
+101; clear_night
 2; light_cloudy_day
 102; light_cloudy_night
 3; party_cloudy_day
-103; party_cloudy_night
-4; cloudy
-104; cloudy
+103; night_party_cloudy
+4; cloud
+104; cloud
 5; rain
 105; rain
 6; rain
@@ -26,8 +25,8 @@
 112; fog
 13; rain
 113; rain
-14; storm
-114; storm
+14; storm_weather
+114; storm_weather
 15; rain
 115; rain
 16; sandstorm

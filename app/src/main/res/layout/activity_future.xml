@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/morning_background"
+    android:background="@drawable/background_dark_brown"
     tools:context=".Activities.FutureActivity">
 
     <ScrollView
@@ -43,7 +43,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/morning_background2"
+                android:background="@drawable/light_background"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -101,7 +101,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="16dp"
-                    android:background="@drawable/morning_background2"
+                    android:background="@drawable/light_background"
                     android:orientation="horizontal">
 
                     <LinearLayout

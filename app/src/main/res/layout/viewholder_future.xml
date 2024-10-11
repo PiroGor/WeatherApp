@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="day"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,7 +28,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/dayTxt"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/sunny" />
+        app:srcCompat="@drawable/sunny_day" />
 
     <TextView
         android:id="@+id/statusTxt"
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="status"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color_light"
         app:layout_constraintBottom_toBottomOf="@+id/pic"
         app:layout_constraintStart_toEndOf="@+id/pic"
         app:layout_constraintTop_toTopOf="@+id/pic" />
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="10"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:text="20"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/lowTxt"
         app:layout_constraintTop_toTopOf="parent" />

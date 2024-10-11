@@ -1,5 +1,6 @@
 package com.nudha.weatherapp.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.nudha.weatherapp.Domains.Hourly;
 import com.nudha.weatherapp.Adapters.HourlyAdapters;
 import com.nudha.weatherapp.R;
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String WEATHER_DATA_24_H = "weather_data_24H.txt";
     private static final String WEATHER_STATUS_ICONS = "weather_status_icons.txt";
 
+    Context context = MainActivity.this;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         percipitation_now = findViewById(R.id.percipitation_now_TextView);
         wind_speed = findViewById(R.id.wind_speed_now_TextView);
         uvIndx = findViewById(R.id.uvIndx_now_TextView);
-
 
         setVariable();
 
