@@ -2,13 +2,17 @@ package com.nudha.weatherapp.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.nudha.weatherapp.API.Meteomatics.request.ApiService;
 import com.nudha.weatherapp.API.Meteomatics.request.WeatherResponse;
@@ -43,6 +47,13 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         locationUtils = new LocationUtils(this);
         locationUtils.requestLocation();
+
+        //status bar color
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.start_color));
+        }
 
         new Handler().postDelayed(new Runnable() {
             @Override
