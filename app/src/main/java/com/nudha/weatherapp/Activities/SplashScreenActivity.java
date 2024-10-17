@@ -55,17 +55,24 @@ public class SplashScreenActivity extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.start_color));
         }
 
-        setWeatherData();
-        setWeatherDataFor24H();
 
-        new Handler().postDelayed(new Runnable() {
+
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                setWeatherData();
+                setWeatherDataFor24H();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Скрытие Splash Screen и отображение основного содержимого
+                        startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
+                        finish();
+                    }
+                });
             }
-        }, SPLASH_TIME_OUT);
+        }).start();
     }
 
     private void clearImageCache(){
