@@ -55,7 +55,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/rounded_background_text_archive"
-        android:backgroundTintMode="add"
         android:gravity="center_horizontal"
         android:text="Archive"
         android:textAllCaps="false"

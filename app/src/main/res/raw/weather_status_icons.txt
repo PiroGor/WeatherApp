@@ -1,33 +1,33 @@
 0; A weather symbol could not be determined
-1; sunny_day
-101; clear_night
-2; light_cloudy_day
-102; light_cloudy_night
-3; party_cloudy_day
-103; night_party_cloudy
-4; cloud
-104; cloud
-5; rain
-105; rain
-6; rain
-106; rain
-7; snow
-107; snow
-8; rain
-108; rain
-9; snow
-109; snow
-10; rain
-110; rain
-11; fog
-111; fog
-12; fog
-112; fog
-13; rain
-113; rain
-14; storm_weather
-114; storm_weather
-15; rain
-115; rain
-16; sandstorm
-116; sandstorm
+1; sunny_day; Sunny
+101; clear_night; Clear Night
+2; light_cloudy_day; Light Cloudy
+102; light_cloudy_night; Light Cloudy
+3; party_cloudy_day; Party Cloudy
+103; night_party_cloudy; Party Cloudy
+4; cloud; Cloudy
+104; cloud; Cloudy
+5; rain; Rainy
+105; rain; Rainy
+6; rain; Sleet
+106; rain; Sleet
+7; snow; Snowy
+107; snow; Snowy
+8; rain; Rain Shower
+108; rain; Rain Shower
+9; snow; Snow Shower
+109; snow; Snow Shower
+10; rain; Sleet Shower
+110; rain; Sleet Shower
+11; fog; Fog
+111; fog; Fog
+12; fog; Dense Fog
+112; fog; Dense Fog
+13; rain; Freezing Rain
+113; rain; Freezing Rain
+14; storm_weather; Storm
+114; storm_weather; Storm
+15; rain; Drizzle
+115; rain; Drizzle
+16; sandstorm; Sandstorm
+116; sandstorm; Sandstorm

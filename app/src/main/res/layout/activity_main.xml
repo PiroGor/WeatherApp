@@ -41,7 +41,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/wether_description_now_TextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="48dp"
@@ -56,7 +56,7 @@
                 android:layout_height="150dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/light_background"
+                android:background="@drawable/rounded_background_icon_img"
                 app:srcCompat="@drawable/clear_night" />
 
             <TextView
@@ -221,7 +221,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:text="Today"
+                    android:text="24 Hours"
                     android:textColor="#949494"
                     android:textSize="20sp"
                     android:textStyle="bold" />
