@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
 import com.nudha.weatherapp.API.Meteomatics.request.ApiService;
 import com.nudha.weatherapp.API.Meteomatics.request.WeatherResponse;
 import com.nudha.weatherapp.API.Meteomatics.requestCreator.LocationPartRequest;
@@ -46,6 +47,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         locationUtils = new LocationUtils(this);
         locationUtils.requestLocation();
 
+        clearImageCache();
         //status bar color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -64,6 +66,21 @@ public class SplashScreenActivity extends AppCompatActivity {
                 finish();
             }
         }, SPLASH_TIME_OUT);
+    }
+
+    private void clearImageCache(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Glide.get(SplashScreenActivity.this).clearDiskCache();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Glide.get(SplashScreenActivity.this).clearMemory();
+                    }
+                });
+            }
+        }).start();
     }
 
     public void setWeatherDataFor24H(){
