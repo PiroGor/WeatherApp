@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String WEATHER_DATA_24_H = "weather_data_24H.txt";
     private static final String WEATHER_STATUS_ICONS = "weather_status_icons.txt";
 
-    Context context = MainActivity.this;
+    //Context context = MainActivity.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
                     String temperature = parts[1];
                     double temp = Double.parseDouble(temperature);
                     String icon_status = parts[2];
-                    Log.d("MainActivity", "Icon Status: " + icon_status);
-                    String icon = getIconIdxInfo(icon_status, "icon");
+                    //Log.d("MainActivity", "Icon Status: " + icon_status);
+                    String icon = getIconIdxDescription(icon_status, "icon");
                     items.add(new Hourly(time.substring(11,13)+":00", temp, icon));
                 }else {
                     Log.d("MainActivity", "No weather data found");
@@ -163,39 +163,8 @@ public class MainActivity extends AppCompatActivity {
         return items;
     }
 
-//    private String getIcon(String iconStatus) {
-//        Log.d("MainActivity", "Get Icon method called");
-//
-//        // Получаем InputStream для файла
-//        InputStream inputStream = getResources().openRawResource(R.raw.weather_status_icons);
-//
-//        // Читаем содержимое файла
-//        String iconPath = readFromFileInputStreamType(inputStream);
-//
-//        if (iconPath != null && !iconPath.isEmpty()) {
-//            String[] parts = iconPath.split("\n");
-//
-//            for (String part : parts) {
-//                String[] icon = part.split("; ");
-//                Double iconDouble = Double.parseDouble(iconStatus);
-//                int iconInt = iconDouble.intValue();
-//                //Log.d("MainActivity", "Icon int: " + iconInt);
-//                String iconStr = iconInt +"";
-//
-//                if (iconStr.equals(icon[0])) {
-//                    return icon[1];  // Возвращаем иконку
-//                }
-//            }
-//
-//            Log.d("MainActivity", "No weather data found for the given status");
-//            Log.d("MainActivity", "Status: " + iconStatus);
-//            return "0";
-//        }
-//
-//        Log.d("MainActivity", "No weather data for 24H found");
-//        return "0";
-//    }
-    private String getIconIdxInfo(String iconIdx, String returnDataType){
+
+    public String getIconIdxDescription(String iconIdx, String returnDataType){
         if(returnDataType.equals("icon")){
          return readFromWeatherStatusIconFile(1, iconIdx);
         }else if(returnDataType.equals("description")){
@@ -314,9 +283,9 @@ public class MainActivity extends AppCompatActivity {
         }else if(key.equals("uvIndx")){
             uvIndx.setText(value);
         }else if(key.equals("iconNow")){
-            icon_description_now.setText(getIconIdxInfo(value, "description"));
+            icon_description_now.setText(getIconIdxDescription(value, "description"));
             iconNow = findViewById(R.id.weather_status_now_img);
-            String icon = getIconIdxInfo(value, "icon");
+            String icon = getIconIdxDescription(value, "icon");
             int drawableId = getResources().getIdentifier(icon, "drawable", getPackageName());
             if (drawableId != 0) {  // Проверяем, что ресурс найден
                 // Устанавливаем Drawable на ImageView

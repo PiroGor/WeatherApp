@@ -8,44 +8,88 @@ import com.nudha.weatherapp.API.Meteomatics.requestCreator.PrecipitationPartRequ
 import com.nudha.weatherapp.API.Meteomatics.requestCreator.TempPartRequest;
 import com.nudha.weatherapp.API.Meteomatics.requestCreator.WindSpeedPartRequest;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class SaveResponseData {
     private static final String WEATHER_24H = "weather_data_24H.txt";
     private static final String WEATHER_NOW = "weather_data.txt";
+    private static final String WEATHER_FUTURE = "weather_data_future.txt";
 
-    //Save response data to
-    public static void setWeather24h(Context context, WeatherResponse weatherResponse) throws IOException {
+    public static void setWeather(Context context, WeatherResponse weatherResponse, String typeToSave) throws IOException {
         try{
-            saveToFileFor24H(context, collectWeatherDataFor24H(weatherResponse));
+            if(typeToSave.equals("24H")){
+                saveToFile(context, collectWeatherDataFor24H(weatherResponse), WEATHER_24H);
+            }else if(typeToSave.equals("now")){
+                saveToFile(context, collectWeatherData(weatherResponse), WEATHER_NOW);
+            } else if (typeToSave.equals("future")) {
+                //Log.d("SaveResponseData: "+ typeToSave, "Data: " + collectWeatherDataFuture5Days(weatherResponse));
+                ReadOrWriteTextFile.updateLast5Records(context, collectWeatherDataFuture5Days(weatherResponse), WEATHER_FUTURE);
+                ReadOrWriteTextFile.sortFileByDate(context, WEATHER_FUTURE);
+            }
         }catch (IOException e){
-            Log.e("SaveResponceData", "Error: " + e.getMessage());
+            Log.e("SaveResponseData: "+ typeToSave, "Error: " + e.getMessage());
         }
     }
 
-    public static void setWeatherNow(Context context, WeatherResponse weatherResponse) throws IOException {
-        try{
-            saveToFile(context, collectWeatherData(weatherResponse));
-        }catch (IOException e){
-            Log.e("SaveResponceData", "Error: " + e.getMessage());
-        }
-    }
-
-    // сохранение в файл данных погоды на 24 часа
-    private static void saveToFileFor24H(Context context, String data) throws IOException {
-        FileOutputStream fos = context.openFileOutput(WEATHER_24H, Context.MODE_PRIVATE);
-        fos.write(data.getBytes());
-        fos.close();
-        //Log.d("SplashScreenActivity", "24H Data saved to file");
-    }
-
-    private static void saveToFile(Context context, String data) throws IOException {
-        FileOutputStream fos = context.openFileOutput(WEATHER_NOW, Context.MODE_PRIVATE);
+    private static void saveToFile(Context context, String data, String fileName) throws IOException {
+        FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
         fos.write(data.getBytes());
         fos.close();
         // Log.d("SplashScreenActivity", "Data saved to file");
+    }
+
+    //https://api.meteomatics.com/2024-10-23ZP5D:PT24H/t_max_2m_24h:C,t_min_2m_24h:C,weather_symbol_1h:idx/50,10/json
+    private static String collectWeatherDataFuture5Days(WeatherResponse weatherResponse) {
+        StringBuilder data = new StringBuilder();
+
+        // Получаем данные из ответа: дата, температута макс и мин, иконка
+        WeatherResponse.Data tempMaxData = findParameter(weatherResponse.getData(), "t_max_2m_24h:C");
+        WeatherResponse.Data tempMinData = findParameter(weatherResponse.getData(), "t_min_2m_24h:C");
+        WeatherResponse.Data iconData = findParameter(weatherResponse.getData(), "weather_symbol_1h:idx");
+
+        if(tempMaxData != null && tempMinData != null && iconData != null){
+            List<WeatherResponse.Data.Coordinate.DateValue> tempMaxDates = tempMaxData.getCoordinates().get(0).getDates();
+            List<WeatherResponse.Data.Coordinate.DateValue> tempMinDates = tempMinData.getCoordinates().get(0).getDates();
+            List<WeatherResponse.Data.Coordinate.DateValue> iconDates = iconData.getCoordinates().get(0).getDates();
+
+            // Проходим по данным и собираем информацию за 24 часа
+            for (int i = 0; i < tempMaxDates.size() && i < tempMinDates.size() && i < iconDates.size(); i++) {
+                double tempMax = tempMaxDates.get(i).getValue();
+                double tempMin = tempMinDates.get(i).getValue();
+                int icon = (int) iconDates.get(i).getValue();
+                String date = tempMaxDates.get(i).getDate();
+                String dayOfWeek = getDayOfWeek(date);
+
+                // Форматирование строки: Температура макс: Температура мин: Иконка
+                data.append(String.format("%s; %s; %.1f; %.1f; %d\n",date, dayOfWeek, tempMax, tempMin, icon));
+            }
+
+        }
+        Log.d("SaveResponseData: future", "Data: " + data.toString());
+        return data.toString();
+    }
+
+    private static String getDayOfWeek(String dateTime) {
+        // Преобразование строки в объект LocalDate
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String inputDate = dateTime.substring(0, 10) ;
+
+        LocalDate date = LocalDate.parse(inputDate, formatter);
+
+        // Получение дня недели
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
+
+        // Преобразование дня недели в сокращенную форму (Mon, Tue, ...)
+        return dayOfWeek.name().substring(0, 3).toUpperCase(); //.toUpperCase
+
     }
 
     // сбор и форматирование данных для сохранения в файл на 24 часа

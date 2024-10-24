@@ -27,6 +27,7 @@ import com.nudha.weatherapp.API.Meteomatics.responce.SaveResponseData;
 import com.nudha.weatherapp.R;
 import com.nudha.weatherapp.permissions.LocationUtils;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import retrofit2.Call;
@@ -35,7 +36,6 @@ import retrofit2.Response;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    private static int SPLASH_TIME_OUT = 3000; // 3 seconds
     private LocationUtils locationUtils;
     private Context context = SplashScreenActivity.this;
 
@@ -46,6 +46,24 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         locationUtils = new LocationUtils(this);
         locationUtils.requestLocation();
+
+//        FileOutputStream fos = null;
+//        try {
+//            // Открываем файл в режиме перезаписи (это очистит содержимое файла)
+//            fos = context.openFileOutput("weather_data_future.txt", Context.MODE_PRIVATE);
+//            // Поскольку мы ничего не пишем, файл будет очищен
+//            // Просто закрываем поток
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (fos != null) {
+//                try {
+//                    fos.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
 
         clearImageCache();
         //status bar color
@@ -62,6 +80,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             public void run() {
                 setWeatherData();
                 setWeatherDataFor24H();
+                setWeatherDataFuture();
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -90,6 +109,39 @@ public class SplashScreenActivity extends AppCompatActivity {
         }).start();
     }
 
+    public void setWeatherDataFuture(){
+        ApiService.getInstance().changeBaseUrl("https://api.meteomatics.com/");
+        Log.d("Splash", LocationPartRequest.getLocationCoordinates());
+        String parameters = TempPartRequest.getTempStats("max24H") + ","
+                + TempPartRequest.getTempStats("min24H") + ","
+                + "weather_symbol_1h:idx";
+
+        ApiService.getInstance().getWeatherApi().getWeather(TimePartRequest.timeConvert("future"),
+                parameters, LocationPartRequest.getLocationCoordinates()).enqueue(new Callback<WeatherResponse>() {
+            @Override
+            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                Log.d("Splash", "Response: " + response);
+                if (response.isSuccessful()) {
+                    WeatherResponse weatherResponse = response.body();
+                    if (weatherResponse != null && weatherResponse.getData() != null && !weatherResponse.getData().isEmpty()) {
+                        // Сохраняем данные в файл
+                        try {
+                            SaveResponseData.setWeather(context, weatherResponse, "future");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                Log.e("SplashFuture", "Error: " + t.getMessage());
+                Toast.makeText(SplashScreenActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public void setWeatherDataFor24H(){
         //Log.d("Splash","24H Weather");
         ApiService.getInstance().changeBaseUrl("https://api.meteomatics.com/");
@@ -105,7 +157,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                     if (weatherResponse != null && weatherResponse.getData() != null && !weatherResponse.getData().isEmpty()) {
                         // Сохраняем данные в файл
                         try {
-                            SaveResponseData.setWeather24h(context, weatherResponse);
+                            SaveResponseData.setWeather(context, weatherResponse, "24H");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -123,7 +175,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
 
     public void setWeatherData() {
-        Log.d("Splash", LocationPartRequest.getLocationCoordinates());
+        //Log.d("Splash", LocationPartRequest.getLocationCoordinates());
         ApiService.getInstance().changeBaseUrl("https://api.meteomatics.com/");
 
         String parameters = TempPartRequest.getTemp() + ","
@@ -142,13 +194,13 @@ public class SplashScreenActivity extends AppCompatActivity {
                     if (weatherResponse != null && weatherResponse.getData() != null && !weatherResponse.getData().isEmpty()) {
                         // Сохраняем данные в файл
                         try {
-                            SaveResponseData.setWeatherNow(context, weatherResponse);
+                            SaveResponseData.setWeather(context, weatherResponse, "now");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-                Log.d("Splash", "Response: " + response);
+                //Log.d("Splash", "Response: " + response);
             }
 
 

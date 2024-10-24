@@ -4,10 +4,10 @@ public class FutureDomain {
     private String day;
     private String picPath;
     private String status;
-    private int highTemp;
-    private int lowTemp;
+    private double highTemp;
+    private double lowTemp;
 
-    public FutureDomain(String day, String picPath, String status, int highTemp, int lowTemp) {
+    public FutureDomain(String day, String picPath, String status, double highTemp, double lowTemp) {
         this.day = day;
         this.picPath = picPath;
         this.status = status;
@@ -39,7 +39,7 @@ public class FutureDomain {
         this.status = status;
     }
 
-    public int getHighTemp() {
+    public double getHighTemp() {
         return highTemp;
     }
 
@@ -47,7 +47,7 @@ public class FutureDomain {
         this.highTemp = highTemp;
     }
 
-    public int getLowTemp() {
+    public double getLowTemp() {
         return lowTemp;
     }
 
