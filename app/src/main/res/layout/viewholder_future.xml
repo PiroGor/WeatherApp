@@ -25,6 +25,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
+        android:background="@drawable/rounded_background_icon_img"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/dayTxt"
         app:layout_constraintTop_toTopOf="parent"

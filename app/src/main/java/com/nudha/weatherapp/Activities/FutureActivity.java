@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -30,8 +31,11 @@ import java.util.ArrayList;
 public class FutureActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterTomorrow;
     public RecyclerView recyclerView;
-    private ImageView backBtn;
+    private ImageView backBtn, icon;
     private final String WEATHER_DATA_FUTURE = "weather_data_future.txt";
+    private final String WEATHER_DATA_TOMORROW = "weather_data_tomorrow.txt";
+    private TextView tempTomorrowTxt, statusTomorrowTxt, precipitationTomorrowTxt, windTomorrowTxt,
+            uvidxTomorrowTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,11 @@ public class FutureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_future);
 
         backBtn = findViewById(R.id.backBtn);
+        tempTomorrowTxt = findViewById(R.id.temp_tomorrow_txt);
+        precipitationTomorrowTxt = findViewById(R.id.precipitation_mm_TextView);
+        windTomorrowTxt = findViewById(R.id.wind_speed_tomorrow_TextView);
+        uvidxTomorrowTxt = findViewById(R.id.uvidx_TextView);
+        icon = findViewById(R.id.icon_tomorrow_img);
 
         //status bar color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -47,6 +56,7 @@ public class FutureActivity extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.start_color));
         }
 
+        setWeatherTomorrow();
         initRecyclerView();
         setVariable();
     }
@@ -60,6 +70,7 @@ public class FutureActivity extends AppCompatActivity {
         });
     }
 
+    //INIT RECYCLER VIEW
     private void initRecyclerView() {
         ArrayList<FutureDomain> items = getFutureArrayList();
 
@@ -69,6 +80,50 @@ public class FutureActivity extends AppCompatActivity {
         adapterTomorrow = new FutureAdapter(items);
         recyclerView.setAdapter(adapterTomorrow);
     }
+
+    private void setWeatherTomorrow(){
+        String weatherData = readFromFile(WEATHER_DATA_TOMORROW);
+
+        if (weatherData != null) {
+            String[] lines = weatherData.split("\n");
+
+            for (String line : lines) {
+                String[] parts = line.split(": ");
+                if (parts.length == 2) {
+                    String key = parts[0];
+                    String value = parts[1];
+                    setWeatherTomorrowData(value, key);
+                }
+            }
+        }else {
+            Log.d("FutureActivity_Tomorrow", "No weather data found");
+        }
+    }
+
+    private void setWeatherTomorrowData(String value, String key){
+        if (key.equals("tempTomorrow")) {
+            tempTomorrowTxt.setText(value + "°");
+        }else if(key.equals("precipitationTomorrow")){
+            precipitationTomorrowTxt.setText(value + "mm");
+        }else if(key.equals("windTomorrow")){
+            windTomorrowTxt.setText(value + "m/s");
+        }else if(key.equals("uvidxTomorrow")){
+            uvidxTomorrowTxt.setText(value);
+        }else if(key.equals("iconTomorrow")){
+            statusTomorrowTxt = findViewById(R.id.weather_status_tomorrow_txt);
+            statusTomorrowTxt.setText(getIconIdxDescription(value, "description"));
+            String iconName = getIconIdxDescription(value, "icon");
+            int drawableId = getResources().getIdentifier(iconName, "drawable", getPackageName());
+            if (drawableId != 0) {  // Проверяем, что ресурс найден
+                // Устанавливаем Drawable на ImageView
+                icon.setImageResource(drawableId);
+            } else {
+                Log.e("MainActivity", "Drawable not found");
+            }
+        }
+    }
+
+
 
     private ArrayList<FutureDomain> getFutureArrayList(){
         ArrayList<FutureDomain> items = new ArrayList<>();

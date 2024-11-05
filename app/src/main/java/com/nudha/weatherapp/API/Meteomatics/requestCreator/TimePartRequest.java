@@ -21,6 +21,9 @@ public class TimePartRequest {
         }else if(period.equalsIgnoreCase("future")) {
             stringBuilder.delete(0, stringBuilder.length());
             return futureTimeConverter();
+        }else if(period.equals("tommorow")){
+            stringBuilder.delete(0, stringBuilder.length());
+            return tomorrowTimeConverter();
         }else{
             return "You chose wrong time";
         }
@@ -41,6 +44,12 @@ public class TimePartRequest {
     private static String futureTimeConverter(){
         return stringBuilder.append(LocalDate.now().plusDays(2).toString())
                 .append("T13:00:00ZP5D:PT24H")
+                .toString();
+    }
+
+    private static String tomorrowTimeConverter(){
+        return stringBuilder.append(LocalDate.now().plusDays(1).toString())
+                .append("T13:00:00Z")
                 .toString();
     }
 

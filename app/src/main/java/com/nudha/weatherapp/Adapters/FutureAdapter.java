@@ -38,8 +38,8 @@ public class FutureAdapter extends RecyclerView.Adapter<FutureAdapter.viewHolder
     @Override
     public void onBindViewHolder(@NonNull FutureAdapter.viewHolder holder, int position) {
         holder.dayTxt.setText(items.get(position).getDay());
-        Log.d("FutureAdapter", "Day: " + items.get(position).getDay());
-        Log.d("FututreAdapter", "Postion: " + position);
+        //Log.d("FutureAdapter", "Day: " + items.get(position).getDay());
+        //Log.d("FututreAdapter", "Postion: " + position);
         holder.statusTxt.setText(items.get(position).getStatus());
         holder.lowTxt.setText(items.get(position).getLowTemp()+"°");
         holder.highTxt.setText(items.get(position).getHighTemp()+"°");

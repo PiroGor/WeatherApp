@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.nudha.weatherapp.API.LocationByCityName.SearchCoordinatesUsingNominatim;
 import com.nudha.weatherapp.Domains.Hourly;
 import com.nudha.weatherapp.Adapters.HourlyAdapters;
 import com.nudha.weatherapp.R;
@@ -42,13 +44,8 @@ public class MainActivity extends AppCompatActivity {
             precipitation_now, wind_speed, uvIndx;
     private ImageView iconNow;
 
-    private SimpleDateFormat sdf = new SimpleDateFormat("HH");
-
     private static final String WEATHER_DATA = "weather_data.txt";
     private static final String WEATHER_DATA_24_H = "weather_data_24H.txt";
-    private static final String WEATHER_STATUS_ICONS = "weather_status_icons.txt";
-
-    //Context context = MainActivity.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
         int itemId = item.getItemId();
 
         if (itemId == R.id.action_update) {
-            Toast.makeText(this, "You selected Update", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, SplashScreenActivity.class);
+            startActivity(intent);
             return true;
         } else if (itemId == R.id.archive) {
             Intent intent = new Intent(this, ArchiveActivity.class);
@@ -103,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.info) {
             Intent intent = new Intent(this, InfoActivity.class);
             startActivity(intent);
+            return true;
+        }else if(itemId == R.id.action_search){
             return true;
         }
 
@@ -113,6 +113,42 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_top_main, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setIconified(false);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Обработка поискового запроса
+                SearchCoordinatesUsingNominatim.searchCoordinates(query);
+                Toast.makeText(MainActivity.this, "Поиск: " + query, Toast.LENGTH_SHORT).show();
+
+                // Закрываем строку поиска после отправки запроса
+                searchView.clearFocus();  // Убираем фокус с SearchView
+                searchItem.collapseActionView();
+                // Сворачиваем SearchView
+                Intent intent = new Intent(MainActivity.this, SplashScreenActivity.class);
+                startActivity(intent);
+                finish();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // Реагируем на изменение текста, если нужно
+                return false;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                // Можно добавить дополнительную логику при закрытии
+                Toast.makeText(MainActivity.this, "Поиск закрыт", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
         return true;
     }
 

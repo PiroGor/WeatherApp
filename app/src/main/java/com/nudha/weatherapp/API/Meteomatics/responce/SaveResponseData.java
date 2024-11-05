@@ -8,10 +8,7 @@ import com.nudha.weatherapp.API.Meteomatics.requestCreator.PrecipitationPartRequ
 import com.nudha.weatherapp.API.Meteomatics.requestCreator.TempPartRequest;
 import com.nudha.weatherapp.API.Meteomatics.requestCreator.WindSpeedPartRequest;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -22,6 +19,7 @@ public class SaveResponseData {
     private static final String WEATHER_24H = "weather_data_24H.txt";
     private static final String WEATHER_NOW = "weather_data.txt";
     private static final String WEATHER_FUTURE = "weather_data_future.txt";
+    private static final String WEATHER_TOMORROW = "weather_data_tomorrow.txt";
 
     public static void setWeather(Context context, WeatherResponse weatherResponse, String typeToSave) throws IOException {
         try{
@@ -33,6 +31,9 @@ public class SaveResponseData {
                 //Log.d("SaveResponseData: "+ typeToSave, "Data: " + collectWeatherDataFuture5Days(weatherResponse));
                 ReadOrWriteTextFile.updateLast5Records(context, collectWeatherDataFuture5Days(weatherResponse), WEATHER_FUTURE);
                 ReadOrWriteTextFile.sortFileByDate(context, WEATHER_FUTURE);
+            }else if(typeToSave.equals("tomorrow")){
+                Log.d("SaveResponseData: "+ typeToSave, "Data: " + collectWeatherDataTomorrow(weatherResponse));
+                saveToFile(context, collectWeatherDataTomorrow(weatherResponse), WEATHER_TOMORROW);
             }
         }catch (IOException e){
             Log.e("SaveResponseData: "+ typeToSave, "Error: " + e.getMessage());
@@ -115,6 +116,16 @@ public class SaveResponseData {
             }
         }
 
+        return data.toString();
+    }
+
+    private static String collectWeatherDataTomorrow(WeatherResponse weatherResponse){
+        StringBuilder data = new StringBuilder();
+        data.append("temp: ").append(setData(weatherResponse, TempPartRequest.getTemp(), "temp"))
+                .append("\nicon: ").append(setData(weatherResponse, "weather_symbol_1h:idx", "icon"))
+                .append("\nwind_speed: ").append(setData(weatherResponse, WindSpeedPartRequest.getWindSpeedPart(), "wind_speed"))
+                .append("\nuvIndx: ").append(setData(weatherResponse, "uv:idx", "uvIndx"))
+                .append("\npercipitation: ").append(setData(weatherResponse, PrecipitationPartRequest.getPrecipitationPart("24h"), "percipitation"));
         return data.toString();
     }
 

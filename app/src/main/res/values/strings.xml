@@ -14,5 +14,7 @@
     <string name="action_archive">Archive</string>
     <!-- Info menu item -->
     <string name="action_info">Info</string>
+    <!-- Search menu item -->
+    <string name="search_city">Search City</string>
 
 </resources>
