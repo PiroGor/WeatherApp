@@ -15,9 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.nudha.weatherapp.R;
+import com.nudha.weatherapp.data.bd.DatabaseHelper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView registerTextView;
     private Button loginButton;
     private boolean isRegistering = false;
-    private ArrayList<HashMap<String, String>> userDataList;
+    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +46,8 @@ public class LoginActivity extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.start_color));
         }
 
-        // Инициализация ArrayList для хранения данных пользователей
-        userDataList = new ArrayList<>();
+        // Инициализация DatabaseHelper
+        databaseHelper = new DatabaseHelper(this);
 
         // Обработка нажатия на "Еще не зарегистрированы?"
         registerTextView.setOnClickListener(new View.OnClickListener() {
@@ -79,27 +78,34 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "Неправильный формат пароля: минимум 8 символов, 1 цифра и 1 спец. символ", Toast.LENGTH_SHORT).show();
                 } else if (isRegistering && !isEmailValid(email)) {
                     Toast.makeText(LoginActivity.this, "Неправильный формат email", Toast.LENGTH_SHORT).show();
-                } else {
-                    HashMap<String, String> userData = new HashMap<>();
-                    userData.put("username", username);
-                    userData.put("password", password);
-
-                    if (isRegistering) {
-                        userData.put("email", email);
+                } else if (isRegistering) {
+                    // Регистрация пользователя
+                    boolean isAdded = databaseHelper.addUser(username, password, email);
+                    if (isAdded) {
+                        Toast.makeText(LoginActivity.this, "Регистрация успешна!", Toast.LENGTH_SHORT).show();
+                        navigateToMainActivity();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Ошибка регистрации! Возможно, логин уже занят.", Toast.LENGTH_SHORT).show();
                     }
-
-                    // Сохранение данных в ArrayList
-                    userDataList.add(userData);
-
-                    // Переход на MainActivity после успешного логина или регистрации
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-
-                    // Завершение LoginActivity, чтобы пользователь не мог вернуться обратно
-                    finish();
+                } else {
+                    // Проверка пользователя при логине
+                    boolean isAuthenticated = databaseHelper.checkUser(username, password);
+                    if (isAuthenticated) {
+                        Toast.makeText(LoginActivity.this, "Вход успешен!", Toast.LENGTH_SHORT).show();
+                        navigateToMainActivity();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Неправильный логин или пароль!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
+    }
+
+    // Метод для перехода на MainActivity
+    private void navigateToMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     // Проверка валидности логина
@@ -109,7 +115,6 @@ public class LoginActivity extends AppCompatActivity {
 
     // Проверка валидности пароля
     private boolean isPasswordValid(String password) {
-        // Регулярное выражение для пароля: минимум 8 символов, хотя бы 1 цифра и 1 специальный символ
         Pattern pattern = Pattern.compile("^(?=.*[0-9])(?=.*[!@#$%^&*()_+=<>?])[a-zA-Z0-9!@#$%^&*()_+=<>?]{8,}$");
         Matcher matcher = pattern.matcher(password);
         return matcher.matches();
@@ -117,7 +122,6 @@ public class LoginActivity extends AppCompatActivity {
 
     // Проверка валидности email
     private boolean isEmailValid(String email) {
-        // Регулярное выражение для email, чтобы проверять наличие "@" и доменного окончания
         Pattern pattern = Pattern.compile("^[\\w.-]+@[\\w.-]+\\.[a-z]{2,}$");
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
