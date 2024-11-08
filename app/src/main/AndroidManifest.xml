@@ -15,19 +15,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherApp">
         <activity
-            android:name=".Activities.SplashScreenActivity"
+            android:name=".activities.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        <!-- MainActivity -->
+            <!-- MainActivity -->
         </activity> <!-- FutureActivity -->
-        <activity android:name=".Activities.MainActivity" />
-        <activity android:name=".Activities.FutureActivity" />
-        <activity android:name=".Activities.ArchiveActivity" />
-        <activity android:name=".Activities.InfoActivity" />
+        <activity android:name=".activities.MainActivity" />
+        <activity android:name=".activities.FutureActivity" />
+        <activity android:name=".activities.ArchiveActivity" />
+        <activity android:name=".activities.InfoActivity" />
     </application>
 
 </manifest>
