@@ -56,6 +56,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (!isRegistering) {
                     emailEditText.setVisibility(View.VISIBLE);
                     registerTextView.setVisibility(View.GONE);
+                    loginButton.setText("Register");
                     isRegistering = true;
                 }
             }
@@ -71,30 +72,30 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Проверка на соответствие требованиям
                 if (username.isEmpty() || password.isEmpty() || (isRegistering && email.isEmpty())) {
-                    Toast.makeText(LoginActivity.this, "Пожалуйста, заполните все поля", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 } else if (!isUsernameValid(username)) {
-                    Toast.makeText(LoginActivity.this, "Неправильный формат логина: от 4 до 16 символов", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Incorrect login format: from 4 to 16 characters", Toast.LENGTH_SHORT).show();
                 } else if (!isPasswordValid(password)) {
-                    Toast.makeText(LoginActivity.this, "Неправильный формат пароля: минимум 8 символов, 1 цифра и 1 спец. символ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Incorrect password format: minimum 8 characters, 1 digit and 1 special. symbol", Toast.LENGTH_SHORT).show();
                 } else if (isRegistering && !isEmailValid(email)) {
-                    Toast.makeText(LoginActivity.this, "Неправильный формат email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Incorrect email format", Toast.LENGTH_SHORT).show();
                 } else if (isRegistering) {
                     // Регистрация пользователя
                     boolean isAdded = databaseHelper.addUser(username, password, email);
                     if (isAdded) {
-                        Toast.makeText(LoginActivity.this, "Регистрация успешна!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Registration is successful!", Toast.LENGTH_SHORT).show();
                         navigateToMainActivity();
                     } else {
-                        Toast.makeText(LoginActivity.this, "Ошибка регистрации! Возможно, логин уже занят.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Registration error! Your login may already be taken.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     // Проверка пользователя при логине
                     boolean isAuthenticated = databaseHelper.checkUser(username, password);
                     if (isAuthenticated) {
-                        Toast.makeText(LoginActivity.this, "Вход успешен!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "The entrance is successful!", Toast.LENGTH_SHORT).show();
                         navigateToMainActivity();
                     } else {
-                        Toast.makeText(LoginActivity.this, "Неправильный логин или пароль!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Wrong login or password!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

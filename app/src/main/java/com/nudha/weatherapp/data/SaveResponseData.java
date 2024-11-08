@@ -69,7 +69,7 @@ public class SaveResponseData {
                 String date = tempMaxDates.get(i).getDate();
                 String dayOfWeek = getDayOfWeek(date);
 
-                // Форматирование строки: Температура макс: Температура мин: Иконка
+                // Форматирование строки: Дата: День недели: Температура макс: Температура мин: Иконка
                 data.append(String.format("%s; %s; %.1f; %.1f; %d\n",date, dayOfWeek, tempMax, tempMin, icon));
             }
 

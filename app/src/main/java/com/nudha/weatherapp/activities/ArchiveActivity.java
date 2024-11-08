@@ -64,46 +64,39 @@ public class ArchiveActivity extends AppCompatActivity {
     private ArrayList<FutureDomain> getArchiveArrayList() {
         ArrayList<FutureDomain> items = new ArrayList<>();
 
-        String weatherData = readFromFile(WEATHER_DATA_ARCHIVE);
+        InputStream inputStream = getResources().openRawResource(R.raw.weather_data_full_year);
+        String weatherDataFullYear = readFromFileInputStreamType(inputStream);
 
-        if (weatherData != null) {
-            String[] lines = weatherData.split("\n");
+       // String weatherData = readFromFile(WEATHER_DATA_ARCHIVE);
+
+        if (weatherDataFullYear != null) {
+            String[] lines = weatherDataFullYear.split("\n");
 
             for (String line : lines) {
                 String[] parts = line.split("; ");
 
-                String day = parts[1];
+                String data = getDayAndMonth(parts[0]);
                 double tempMax = Double.parseDouble(parts[2]);
                 double tempMin = Double.parseDouble(parts[3]);
                 String iconNum = parts[4];
                 String icon = getIconIdxDescription(iconNum, "icon");
                 String status = getIconIdxDescription(iconNum, "description");
 
-                items.add(new FutureDomain(day, icon, status, tempMax, tempMin));
+                items.add(new FutureDomain(data, icon, status, tempMax, tempMin));
             }
         }
-        if (weatherData == null || weatherData.isEmpty()) {
+        if (weatherDataFullYear == null || weatherDataFullYear.isEmpty()) {
             Log.d("ArchiveActivity", "No weather data for 24H found");
             return items;
         }
         return items;
     }
 
-    private String readFromFile(String fileName) {
-        // Читаем данные из файла
-        //Log.d("MainActivity", "Reading data from file");
-        StringBuilder data = new StringBuilder();
-        try (FileInputStream fis = openFileInput(fileName);
-             InputStreamReader isr = new InputStreamReader(fis);
-             BufferedReader br = new BufferedReader(isr)) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                data.append(line).append("\n");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return data.toString();
+    private String getDayAndMonth(String date) {
+        String[] parts = date.split("-");
+        String day = parts[2].substring(0, 2);
+        String month = parts[1];
+        return day + "/" + month;
     }
 
     public String getIconIdxDescription(String iconIdx, String returnDataType){

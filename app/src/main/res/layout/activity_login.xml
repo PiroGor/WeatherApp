@@ -36,6 +36,7 @@
             android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/start_color"
             android:hint="Email"
             android:visibility="gone" />
 
@@ -45,13 +46,13 @@
             android:layout_height="wrap_content"
             android:textColor="@color/text_color_light"
             android:backgroundTint="@color/background_dark"
-            android:text="Войти" />
+            android:text="Log in" />
 
         <TextView
             android:id="@+id/registerTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Еще не зарегистрированы?"
+            android:text="Not registered yet?"
             android:textColor="@color/start_color"
             android:layout_gravity="center"
             android:paddingTop="10dp"

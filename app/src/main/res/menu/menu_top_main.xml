@@ -4,9 +4,9 @@
     app:showAsAction="always">
 
     <item
-        android:id="@+id/action_update"
+        android:id="@+id/action_advice"
         android:icon="@drawable/ic_update"
-        android:title="@string/action_update" />
+        android:title="@string/action_advice" />
 
     <item
         android:id="@+id/action_search"

@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -30,6 +31,7 @@ import com.nudha.weatherapp.data.SetWeather;
 import com.nudha.weatherapp.domains.Hourly;
 import com.nudha.weatherapp.adapters.HourlyAdapters;
 import com.nudha.weatherapp.R;
+import com.nudha.weatherapp.fragments.CardDialogFragment;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -162,8 +164,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
 
-        if (itemId == R.id.action_update) {
-            updateWeatherData();
+        if (itemId == R.id.action_advice) {
+            showCardDialog();
             return true;
         } else if (itemId == R.id.archive) {
             Intent intent = new Intent(this, ArchiveActivity.class);
@@ -403,38 +405,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    private void updateWeatherData() {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                SetWeather.setWeather(MainActivity.this);
-//
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        setWeatherNow();
-//                        initRecyclerview();
-//                    }
-//                });
-//            }
-//
-//        }).start();
-//    }
-
-//    private void refreshWeatherData(){
-//        updateWeatherData();
-//        setDataTime();
-//
-//        Objects.requireNonNull(getSupportActionBar()).setTitle(SeatchingNameOfCityByCoordinates.
-//                searchCityName(LocationPartRequest.getLatitude(), LocationPartRequest.getLongitude()));
-//
-//        Log.d("Main","Coordinates "+ LocationPartRequest.getLocationCoordinates());
-//
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                swipeRefreshLayout.setRefreshing(false);
-//            }
-//        },2000);
-//    }
+    private void showCardDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        CardDialogFragment cardDialogFragment = new CardDialogFragment();
+        cardDialogFragment.show(fragmentManager, "card_dialog");
+    }
 }

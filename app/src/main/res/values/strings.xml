@@ -8,12 +8,14 @@
     <string name="weather_key">insert your key here</string>
 
     <!-- Update menu item -->
-    <string name="action_update">Update</string>
+    <string name="action_advice">Advice</string>
     <!-- Archive menu item -->
     <string name="action_archive">Archive</string>
     <!-- Info menu item -->
     <string name="action_info">Info</string>
     <!-- Search menu item -->
     <string name="search_city">Search City</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
