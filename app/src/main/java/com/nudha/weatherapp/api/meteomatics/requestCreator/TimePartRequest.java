@@ -21,7 +21,7 @@ public class TimePartRequest {
         }else if(period.equalsIgnoreCase("future")) {
             stringBuilder.delete(0, stringBuilder.length());
             return futureTimeConverter();
-        }else if(period.equals("tommorow")){
+        }else if(period.equals("tomorrow")){
             stringBuilder.delete(0, stringBuilder.length());
             return tomorrowTimeConverter();
         }else{

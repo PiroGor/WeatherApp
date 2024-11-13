@@ -16,13 +16,12 @@
             android:layout_height="200dp"
             app:srcCompat="@drawable/splash_icon" />
 
-
         <EditText
-            android:id="@+id/usernameEditText"
+            android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/start_color"
-            android:hint="Username" />
+            android:hint="Email" />
 
         <EditText
             android:id="@+id/passwordEditText"
@@ -33,12 +32,13 @@
             android:inputType="textPassword" />
 
         <EditText
-            android:id="@+id/emailEditText"
+            android:id="@+id/usernameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/start_color"
-            android:hint="Email"
-            android:visibility="gone" />
+            android:hint="Username"
+            android:visibility="gone"/>
+
 
         <Button
             android:id="@+id/loginButton"

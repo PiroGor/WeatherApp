@@ -149,6 +149,30 @@ public class SaveResponseData {
         return data.toString();
     }
 
+    public static String collectWeatherDataTomorrowNotification(WeatherResponse weatherResponse) {
+        StringBuilder data = new StringBuilder();
+
+        // Получаем данные из ответа: дата, температута макс и мин, иконка
+        WeatherResponse.Data tempMaxData = findParameter(weatherResponse.getData(), "t_max_2m_24h:C");
+        WeatherResponse.Data tempMinData = findParameter(weatherResponse.getData(), "t_min_2m_24h:C");
+        WeatherResponse.Data iconData = findParameter(weatherResponse.getData(), "weather_symbol_1h:idx");
+
+        if(tempMaxData != null && tempMinData != null && iconData != null){
+            List<WeatherResponse.Data.Coordinate.DateValue> tempMaxDates = tempMaxData.getCoordinates().get(0).getDates();
+            List<WeatherResponse.Data.Coordinate.DateValue> tempMinDates = tempMinData.getCoordinates().get(0).getDates();
+            List<WeatherResponse.Data.Coordinate.DateValue> iconDates = iconData.getCoordinates().get(0).getDates();
+
+            double tempMax = tempMaxDates.get(0).getValue();
+            double tempMin = tempMinDates.get(0).getValue();
+            int icon = (int) iconDates.get(0).getValue();
+
+            // Форматирование строки: Температура макс: Температура мин: Иконка
+            data.append(String.format("Max. %.1f°C, Min. %.1f°C, %d\n",tempMax, tempMin, icon));
+        }
+        Log.d("SaveResponseData: tomorrow", "Data: " + data.toString());
+        return data.toString();
+    }
+
     private static String setData(WeatherResponse weatherResponse, String parameter, String paramName) {
         // Получаем данные из ответа
         WeatherResponse.Data data = findParameter(weatherResponse.getData(), parameter);

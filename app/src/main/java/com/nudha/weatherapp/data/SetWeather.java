@@ -21,11 +21,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SetWeather {
+    private static String tomorrow="";
 
     public static void setWeather(Context context){
         setWeatherDataNow(context);
         setWeatherDataFor24H(context);
         setWeatherDataFuture(context);
+        setWeatherDataTomorrow(context);
     }
 
     private static void setWeatherDataFuture(Context context){
@@ -125,5 +127,35 @@ public class SetWeather {
                 Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private static void setWeatherDataTomorrow(Context context){
+        ApiService.getInstance().changeBaseUrl("https://api.meteomatics.com/");
+        String parameters = TempPartRequest.getTempStats("max24H") + ","
+                + TempPartRequest.getTempStats("min24H") + ","
+                + "weather_symbol_1h:idx";
+
+        ApiService.getInstance().getWeatherApi().getWeather(TimePartRequest.timeConvert("tomorrow"),
+                parameters, LocationPartRequest.getLocationCoordinates()).enqueue(new Callback<WeatherResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<WeatherResponse> call, @NonNull Response<WeatherResponse> response) {
+                if (response.isSuccessful()) {
+                    WeatherResponse weatherResponse = response.body();
+                    if (weatherResponse != null && weatherResponse.getData() != null && !weatherResponse.getData().isEmpty()) {
+                        // Сохраняем данные в файл
+                        tomorrow = SaveResponseData.collectWeatherDataTomorrowNotification(weatherResponse);
+                    }
+                }
+                //Log.d("Splash", "Response: " + response);
+            }
+            @Override
+            public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                Log.e("MainActivity", "Error: " + t.getMessage());
+                Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    public static String getTomorrowData(){
+        return tomorrow;
     }
 }

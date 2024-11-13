@@ -25,5 +25,9 @@
         android:icon="@drawable/ic_info"
         android:title="@string/action_info" />
 
+    <item android:id="@+id/logout"
+        android:icon="@drawable/ic_logout"
+        android:title="@string/action_logout" />
+
 
 </menu>

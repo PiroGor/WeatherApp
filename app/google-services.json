@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "417441270935",
+    "project_id": "cozy-weather-app",
+    "storage_bucket": "cozy-weather-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:417441270935:android:1e7451720fefa9c9b5edd2",
+        "android_client_info": {
+          "package_name": "com.nudha.weatherapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "417441270935-9ibf5s7d44ocf7dqjs7hegqgc6d82itl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nudha.weatherapp",
+            "certificate_hash": "6dbc560992138d1bc6ebb3e38f5de136e92259cd"
+          }
+        },
+        {
+          "client_id": "417441270935-69d7p34gbfvkb85k9uv19umtjv0hq3db.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcez6Jy8TYkBGsmP5ut9Abrp-7LPL3nAI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "417441270935-69d7p34gbfvkb85k9uv19umtjv0hq3db.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

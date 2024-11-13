@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -34,6 +35,11 @@ android {
 dependencies {
 
     implementation(libs.play.services.location)
+    implementation(libs.firebase.auth)
+    implementation("com.google.firebase:firebase-core:21.1.1")
+    implementation("com.google.firebase:firebase-auth:23.1.0")
+    implementation("com.google.firebase:firebase-messaging:24.0.3")
+    implementation("com.google.gms:google-services:4.4.2")
     //Viewmodel
     val lifecycling_version = "2.8.2"
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycling_version")
@@ -55,5 +61,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
+    implementation ("androidx.work:work-runtime:2.7.0")
+    implementation ("com.google.guava:guava:31.1-android")
 
 }

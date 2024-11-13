@@ -11,11 +11,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.nudha.weatherapp.R;
-import com.nudha.weatherapp.data.bd.DatabaseHelper;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,7 +30,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView registerTextView;
     private Button loginButton;
     private boolean isRegistering = false;
-    private DatabaseHelper databaseHelper;
+
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +51,15 @@ public class LoginActivity extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.start_color));
         }
 
-        // Инициализация DatabaseHelper
-        databaseHelper = new DatabaseHelper(this);
+        // Инициализация Firebase Authentication
+        auth = FirebaseAuth.getInstance();
 
         // Обработка нажатия на "Еще не зарегистрированы?"
         registerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!isRegistering) {
-                    emailEditText.setVisibility(View.VISIBLE);
+                    usernameEditText.setVisibility(View.VISIBLE);
                     registerTextView.setVisibility(View.GONE);
                     loginButton.setText("Register");
                     isRegistering = true;
@@ -71,32 +76,36 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString().trim();
 
                 // Проверка на соответствие требованиям
-                if (username.isEmpty() || password.isEmpty() || (isRegistering && email.isEmpty())) {
+                if (email.isEmpty() || password.isEmpty() || (isRegistering && username.isEmpty())) {
                     Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-                } else if (!isUsernameValid(username)) {
-                    Toast.makeText(LoginActivity.this, "Incorrect login format: from 4 to 16 characters", Toast.LENGTH_SHORT).show();
+                } else if (!isEmailValid(email)) {
+                    Toast.makeText(LoginActivity.this, "Incorrect email format", Toast.LENGTH_SHORT).show();
                 } else if (!isPasswordValid(password)) {
                     Toast.makeText(LoginActivity.this, "Incorrect password format: minimum 8 characters, 1 digit and 1 special. symbol", Toast.LENGTH_SHORT).show();
-                } else if (isRegistering && !isEmailValid(email)) {
-                    Toast.makeText(LoginActivity.this, "Incorrect email format", Toast.LENGTH_SHORT).show();
+                } else if (isRegistering && !isUsernameValid(username)) {
+                    Toast.makeText(LoginActivity.this, "Incorrect name format", Toast.LENGTH_SHORT).show();
                 } else if (isRegistering) {
                     // Регистрация пользователя
-                    boolean isAdded = databaseHelper.addUser(username, password, email);
-                    if (isAdded) {
-                        Toast.makeText(LoginActivity.this, "Registration is successful!", Toast.LENGTH_SHORT).show();
-                        navigateToMainActivity();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Registration error! Your login may already be taken.", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
+                    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(LoginActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                            navigateToMainActivity();
+                        }
+                    });
+
+                }else{
                     // Проверка пользователя при логине
-                    boolean isAuthenticated = databaseHelper.checkUser(username, password);
-                    if (isAuthenticated) {
-                        Toast.makeText(LoginActivity.this, "The entrance is successful!", Toast.LENGTH_SHORT).show();
-                        navigateToMainActivity();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Wrong login or password!", Toast.LENGTH_SHORT).show();
-                    }
+                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (!task.isSuccessful()) {
+                                Toast.makeText(LoginActivity.this, "Incorrect login or password", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                                navigateToMainActivity();
+                            }
+                        }
+                    });
                 }
             }
         });

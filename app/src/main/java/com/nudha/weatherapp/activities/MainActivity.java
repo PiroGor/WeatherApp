@@ -1,6 +1,10 @@
 package com.nudha.weatherapp.activities;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
@@ -23,7 +29,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.nudha.weatherapp.api.LocationByCityName.SearchCoordinatesUsingNominatim;
 import com.nudha.weatherapp.api.LocationByCityName.SeatchingNameOfCityByCoordinates;
 import com.nudha.weatherapp.api.meteomatics.requestCreator.LocationPartRequest;
@@ -32,6 +42,7 @@ import com.nudha.weatherapp.domains.Hourly;
 import com.nudha.weatherapp.adapters.HourlyAdapters;
 import com.nudha.weatherapp.R;
 import com.nudha.weatherapp.fragments.CardDialogFragment;
+import com.nudha.weatherapp.notifications.DailyNotificationWorker;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -40,9 +51,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterHourly;
@@ -55,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String WEATHER_DATA_24_H = "weather_data_24H.txt";
 
     private SwipeRefreshLayout swipeRefreshLayout;
+    private FirebaseAuth auth;
+    private static final String TAG = "MainActivity";
+
+    private ActivityResultLauncher<String> requestPermissionLauncher;
 
 
     @Override
@@ -83,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.start_color));
         }
 
+        auth = FirebaseAuth.getInstance();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -102,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }).start();
+
+        createNotificationChannel();
+        requestNotificationPermission();
+        scheduleDailyNotification();
 
         swipeRefreshLayout.setOnRefreshListener(this::refreshWeatherData);
 
@@ -176,6 +199,10 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         }else if(itemId == R.id.action_search){
+            return true;
+        }else if(itemId == R.id.logout){
+            auth.signOut();
+            startActivity(new Intent(this, LoginActivity.class));
             return true;
         }
 
@@ -409,5 +436,64 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         CardDialogFragment cardDialogFragment = new CardDialogFragment();
         cardDialogFragment.show(fragmentManager, "card_dialog");
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "DailyNotificationChannel";
+            String description = "Channel for daily notifications";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("DAILY_NOTIFICATION_CHANNEL", name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    public void scheduleDailyNotification() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 20);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        if (Calendar.getInstance().after(calendar)) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        long initialDelay = calendar.getTimeInMillis() - System.currentTimeMillis();
+        PeriodicWorkRequest dailyWorkRequest = new PeriodicWorkRequest.Builder(DailyNotificationWorker.class, 24, TimeUnit.HOURS)
+                .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
+                .build();
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork("DailyNotification", ExistingPeriodicWorkPolicy.REPLACE, dailyWorkRequest);
+    }
+
+    private void requestNotificationPermission() {
+        // Инициализация запроса разрешения с обработчиком результата
+        requestPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        // Разрешение получено, можно отправлять уведомления
+                        scheduleDailyNotification();
+                    } else {
+                        // Разрешение не предоставлено; уведомления будут недоступны
+                    }
+                }
+        );
+        // Проверяем, есть ли уже разрешение
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) {
+            scheduleDailyNotification(); // Разрешение уже есть, запускаем уведомления
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+            // Опционально: показать пользователю объяснение необходимости разрешения
+            Toast.makeText(this, "Разрешите уведомления для возможности отправки полезных сообщений", Toast.LENGTH_SHORT).show();
+            // Запрашиваем разрешение
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        } else {
+            // Запрашиваем разрешение
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
     }
 }
