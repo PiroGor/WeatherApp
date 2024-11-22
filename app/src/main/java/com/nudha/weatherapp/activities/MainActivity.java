@@ -178,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         setWeatherNow();
-        initRecyclerview();
 
 
     }
@@ -221,27 +220,26 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Обработка поискового запроса
+                // Search query processing
                 SearchCoordinatesUsingNominatim.searchCoordinates(query);
-                Toast.makeText(MainActivity.this, "Поиск: " + query, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Search: " + query, Toast.LENGTH_SHORT).show();
 
-                // Закрываем строку поиска после отправки запроса
-                searchView.clearFocus();  // Убираем фокус с SearchView
+                // Close the search bar after submitting a request
+                searchView.clearFocus();  // Taking the focus off SearchView
                 searchItem.collapseActionView();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // Реагируем на изменение текста, если нужно
+                // Respond to text changes if needed
                 return false;
             }
         });
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                // Можно добавить дополнительную логику при закрытии
-                Toast.makeText(MainActivity.this, "Поиск закрыт", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Search closed", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -253,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
         next7days_btn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, FutureActivity.class))
         );
     }
-//адаптировать после now TODO
+
     private void initRecyclerview(){
         //https://api.meteomatics.com/2024-08-08T16:00:00ZP1D:PT1H/t_2m:C,weather_symbol_1h:idx/50,10/json
         ArrayList<Hourly> items = getHourlyArrayList();
@@ -311,10 +309,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String readFromWeatherStatusIconFile(int returnData, String iconIdx){
-        // Получаем InputStream для файла
         InputStream inputStream = getResources().openRawResource(R.raw.weather_status_icons);
 
-        // Читаем содержимое файла
         String iconPath = readFromFileInputStreamType(inputStream);
 
             if (iconPath != null && !iconPath.isEmpty()) {
@@ -388,7 +384,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String readFromFile(String fileName) {
-        // Читаем данные из файла
         //Log.d("MainActivity", "Reading data from file");
         StringBuilder data = new StringBuilder();
         try (FileInputStream fis = openFileInput(fileName);
@@ -423,8 +418,7 @@ public class MainActivity extends AppCompatActivity {
             iconNow = findViewById(R.id.weather_status_now_img);
             String icon = getIconIdxDescription(value, "icon");
             int drawableId = getResources().getIdentifier(icon, "drawable", getPackageName());
-            if (drawableId != 0) {  // Проверяем, что ресурс найден
-                // Устанавливаем Drawable на ImageView
+            if (drawableId != 0) {  // Check that the resource has been found
                 iconNow.setImageResource(drawableId);
             } else {
                 Log.e("MainActivity", "Drawable not found");
@@ -470,29 +464,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestNotificationPermission() {
-        // Инициализация запроса разрешения с обработчиком результата
+        // Initializing a resolution request with a result handler
         requestPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
                 isGranted -> {
                     if (isGranted) {
-                        // Разрешение получено, можно отправлять уведомления
+                        // Permission granted, notifications can be sent
                         scheduleDailyNotification();
                     } else {
-                        // Разрешение не предоставлено; уведомления будут недоступны
+                        // Authorization not granted; notifications will not be available
                     }
                 }
         );
-        // Проверяем, есть ли уже разрешение
+        // Checking if the authorization is already in place
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 == PackageManager.PERMISSION_GRANTED) {
-            scheduleDailyNotification(); // Разрешение уже есть, запускаем уведомления
+            scheduleDailyNotification();
         } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-            // Опционально: показать пользователю объяснение необходимости разрешения
             Toast.makeText(this, "Разрешите уведомления для возможности отправки полезных сообщений", Toast.LENGTH_SHORT).show();
-            // Запрашиваем разрешение
             requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
         } else {
-            // Запрашиваем разрешение
             requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
         }
     }

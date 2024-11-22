@@ -67,8 +67,6 @@ public class ArchiveActivity extends AppCompatActivity {
         InputStream inputStream = getResources().openRawResource(R.raw.weather_data_full_year);
         String weatherDataFullYear = readFromFileInputStreamType(inputStream);
 
-       // String weatherData = readFromFile(WEATHER_DATA_ARCHIVE);
-
         if (weatherDataFullYear != null) {
             String[] lines = weatherDataFullYear.split("\n");
 
@@ -110,10 +108,8 @@ public class ArchiveActivity extends AppCompatActivity {
     }
 
     private String readFromWeatherStatusIconFile(int returnData, String iconIdx){
-        // Получаем InputStream для файла
         InputStream inputStream = getResources().openRawResource(R.raw.weather_status_icons);
 
-        // Читаем содержимое файла
         String iconPath = readFromFileInputStreamType(inputStream);
 
         if (iconPath != null && !iconPath.isEmpty()) {

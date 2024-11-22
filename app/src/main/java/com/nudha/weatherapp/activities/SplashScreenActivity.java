@@ -45,7 +45,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        // Скрытие Splash Screen и отображение основного содержимого
+                        // Intent to Login Activity
                         startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
                         finish();
                     }

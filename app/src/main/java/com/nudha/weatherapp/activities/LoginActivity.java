@@ -38,7 +38,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Инициализация полей и кнопок
         usernameEditText = findViewById(R.id.usernameEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         emailEditText = findViewById(R.id.emailEditText);
@@ -51,10 +50,10 @@ public class LoginActivity extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.start_color));
         }
 
-        // Инициализация Firebase Authentication
+        // Initialize Firebase Authentication
         auth = FirebaseAuth.getInstance();
 
-        // Обработка нажатия на "Еще не зарегистрированы?"
+        // Processing a click on the "Register" text
         registerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // Обработка нажатия на кнопку "Войти"
+        // Processing a click on the "Log in" button
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                 String password = passwordEditText.getText().toString().trim();
                 String email = emailEditText.getText().toString().trim();
 
-                // Проверка на соответствие требованиям
+                // Compliance check
                 if (email.isEmpty() || password.isEmpty() || (isRegistering && username.isEmpty())) {
                     Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 } else if (!isEmailValid(email)) {
@@ -85,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (isRegistering && !isUsernameValid(username)) {
                     Toast.makeText(LoginActivity.this, "Incorrect name format", Toast.LENGTH_SHORT).show();
                 } else if (isRegistering) {
-                    // Регистрация пользователя
+                    // User registration
                     auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, task -> {
                         if (task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
@@ -94,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                     });
 
                 }else{
-                    // Проверка пользователя при логине
+                    // User verification at login
                     auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -111,26 +110,26 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // Метод для перехода на MainActivity
+    // Method for switching to MainActivity
     private void navigateToMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
-    // Проверка валидности логина
+    // Checking login validity
     private boolean isUsernameValid(String username) {
         return username.length() >= 4 && username.length() <= 16;
     }
 
-    // Проверка валидности пароля
+    // Check password validity
     private boolean isPasswordValid(String password) {
         Pattern pattern = Pattern.compile("^(?=.*[0-9])(?=.*[!@#$%^&*()_+=<>?])[a-zA-Z0-9!@#$%^&*()_+=<>?]{8,}$");
         Matcher matcher = pattern.matcher(password);
         return matcher.matches();
     }
 
-    // Проверка валидности email
+    // Check email validity
     private boolean isEmailValid(String email) {
         Pattern pattern = Pattern.compile("^[\\w.-]+@[\\w.-]+\\.[a-z]{2,}$");
         Matcher matcher = pattern.matcher(email);

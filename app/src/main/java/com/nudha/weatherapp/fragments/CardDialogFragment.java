@@ -39,7 +39,7 @@ public class CardDialogFragment extends DialogFragment {
 
         view.findViewById(R.id.card_layout).setOnClickListener(v -> flipCard());
 
-        view.setOnClickListener(v -> dismiss()); // Закрыть при нажатии за границу карточки
+        view.setOnClickListener(v -> dismiss()); // Close when clicking outside the card border
 
         return view;
     }

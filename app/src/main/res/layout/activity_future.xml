@@ -22,15 +22,15 @@
             android:orientation="vertical" >
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="42dp"
-                android:layout_height="42dp"
+                android:layout_width="59dp"
+                android:layout_height="44dp"
                 android:layout_margin="16dp">
 
                 <ImageView
                     android:id="@+id/backBtn"
-                    android:layout_width="58dp"
-                    android:layout_height="57dp"
-                    android:background="@drawable/rounded_background_icon_img"
+                    android:layout_width="59dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/rounded_background_text_archive"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

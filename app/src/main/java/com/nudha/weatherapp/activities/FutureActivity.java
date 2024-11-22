@@ -114,8 +114,8 @@ public class FutureActivity extends AppCompatActivity {
             statusTomorrowTxt.setText(getIconIdxDescription(value, "description"));
             String iconName = getIconIdxDescription(value, "icon");
             int drawableId = getResources().getIdentifier(iconName, "drawable", getPackageName());
-            if (drawableId != 0) {  // Проверяем, что ресурс найден
-                // Устанавливаем Drawable на ImageView
+            if (drawableId != 0) {  //  Check that the resource has been found
+                // Set Drawable to ImageView
                 icon.setImageResource(drawableId);
             } else {
                 Log.e("MainActivity", "Drawable not found");
