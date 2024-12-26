@@ -12,15 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.nudha.weatherapp.R;
-import com.nudha.weatherapp.domains.Hourly;
+import com.nudha.weatherapp.domains.HourlyDomain;
 
 import java.util.ArrayList;
 
 public class HourlyAdapters extends RecyclerView.Adapter<HourlyAdapters.viewHolder> {
-    private ArrayList<Hourly> items;
+    private ArrayList<HourlyDomain> items;
     private Context context;
 
-    public HourlyAdapters(ArrayList<Hourly> items, Context context) {
+    public HourlyAdapters(ArrayList<HourlyDomain> items, Context context) {
         this.items = items;
         this.context = context;
     }
@@ -52,7 +52,7 @@ public class HourlyAdapters extends RecyclerView.Adapter<HourlyAdapters.viewHold
     }
 
     // Новый метод для обновления данных адаптера
-    public void updateData(ArrayList<Hourly> newItems) {
+    public void updateData(ArrayList<HourlyDomain> newItems) {
         this.items.clear();           // Очищаем текущий список
         this.items.addAll(newItems);   // Добавляем новые данные
         notifyDataSetChanged();        // Уведомляем адаптер об изменении данных

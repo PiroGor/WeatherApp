@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
     private boolean isRegistering = false;
 
-    private FirebaseAuth auth;
+    public FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +109,18 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+    public static boolean check(String typeToCheck, String valueToCheck){
+        switch (typeToCheck) {
+            case "username":
+                return isUsernameValid(valueToCheck);
+            case "email":
+                return isEmailValid(valueToCheck);
+            case "password":
+                return isPasswordValid(valueToCheck);
+            default:
+                return false;
+        }
+    }
 
     // Method for switching to MainActivity
     private void navigateToMainActivity() {
@@ -118,19 +130,19 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // Checking login validity
-    private boolean isUsernameValid(String username) {
+    private static boolean isUsernameValid(String username) {
         return username.length() >= 4 && username.length() <= 16;
     }
 
     // Check password validity
-    private boolean isPasswordValid(String password) {
+    private static boolean isPasswordValid(String password) {
         Pattern pattern = Pattern.compile("^(?=.*[0-9])(?=.*[!@#$%^&*()_+=<>?])[a-zA-Z0-9!@#$%^&*()_+=<>?]{8,}$");
         Matcher matcher = pattern.matcher(password);
         return matcher.matches();
     }
 
     // Check email validity
-    private boolean isEmailValid(String email) {
+    private static boolean isEmailValid(String email) {
         Pattern pattern = Pattern.compile("^[\\w.-]+@[\\w.-]+\\.[a-z]{2,}$");
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();

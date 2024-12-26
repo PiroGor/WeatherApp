@@ -17,7 +17,7 @@ import com.nudha.weatherapp.R;
 
 import java.util.ArrayList;
 
-public class FutureAdapter extends RecyclerView.Adapter<FutureAdapter.viewHolder> {
+public class FutureAdapter extends RecyclerView.Adapter<FutureAdapter.ViewHolder> {
     ArrayList<FutureDomain> items;
     Context context;
 
@@ -27,24 +27,19 @@ public class FutureAdapter extends RecyclerView.Adapter<FutureAdapter.viewHolder
 
     @NonNull
     @Override
-    public FutureAdapter.viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_future, parent, false);
         context = parent.getContext();
-        return new viewHolder(inflate);
+        return new ViewHolder(inflate);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FutureAdapter.viewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.dayTxt.setText(items.get(position).getDay());
-        //Log.d("FutureAdapter", "Day: " + items.get(position).getDay());
-        //Log.d("FututreAdapter", "Postion: " + position);
         holder.statusTxt.setText(items.get(position).getStatus());
         holder.lowTxt.setText(items.get(position).getLowTemp()+"°");
         holder.highTxt.setText(items.get(position).getHighTemp()+"°");
 
-        //fixme: optimization
-        // int drawableResourceId = holder.itemView.getResources()
-        //         .getIdentifier(items.get(position).getPicPath(),"drawable", holder.itemView.getContext().getPackageCodePath());
         int drawableResourceId = holder.itemView.getContext().getResources()
                 .getIdentifier(items.get(position).getPicPath(), "drawable", holder.itemView.getContext().getPackageName());
 
@@ -58,11 +53,11 @@ public class FutureAdapter extends RecyclerView.Adapter<FutureAdapter.viewHolder
         return items.size();
     }
 
-    public class viewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder{
         TextView dayTxt, statusTxt, lowTxt, highTxt;
         ImageView pic;
 
-        public viewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             dayTxt = itemView.findViewById(R.id.dayTxt);

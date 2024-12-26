@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.nudha.weatherapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.nudha.weatherapp"
-        minSdk = 29
-        targetSdk = 34
+        minSdk = 23
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -19,7 +19,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -27,41 +27,60 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
+    buildToolsVersion = "35.0.0 rc1"
 }
 
 dependencies {
 
     implementation(libs.play.services.location)
     implementation(libs.firebase.auth)
-    implementation("com.google.firebase:firebase-core:21.1.1")
-    implementation("com.google.firebase:firebase-auth:23.1.0")
-    implementation("com.google.firebase:firebase-messaging:24.0.3")
-    implementation("com.google.gms:google-services:4.4.2")
+    implementation(libs.firebase.core)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.messaging)
+    implementation(libs.google.services)
+    implementation(libs.media3.common)
+    implementation(libs.espresso.contrib)
+    testImplementation(libs.core)
+    testImplementation(libs.ext.junit)
+    testImplementation(libs.espresso.core)
+    androidTestImplementation(libs.rules)
+
     //Viewmodel
     val lifecycling_version = "2.8.2"
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycling_version")
+    implementation(libs.lifecycle.livedata.ktx)
 
     //Google Maps
-    implementation ("com.google.android.gms:play-services-maps:18.0.2")
-    implementation ("com.google.android.libraries.places:places:3.1.0")
+    implementation (libs.play.services.maps)
+    implementation (libs.places)
 
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation(libs.swiperefreshlayout)
 
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    //test implementations
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
+    testImplementation(libs.mockito.core)
+    testImplementation (libs.mockito.inline)
+    androidTestImplementation (libs.mockito.android)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.testng)
+    testImplementation("androidx.test:rules:1.6.1")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    testImplementation("org.robolectric:robolectric:4.14.1")
 
-    implementation ("androidx.work:work-runtime:2.7.0")
-    implementation ("com.google.guava:guava:31.1-android")
+    implementation(libs.glide)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 
+    implementation (libs.work.runtime)
+    implementation (libs.guava)
 }

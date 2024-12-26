@@ -29,13 +29,6 @@ public class DailyNotificationWorker extends Worker {
         this.context = context;
     }
 
-    private String getWeatherTomorrow() {
-        SetWeather.setWeather(getApplicationContext());
-        String weatherTomorrow = SetWeather.getTomorrowData();
-        icon = weatherTomorrow.split(", ")[2];
-        return weatherTomorrow.split(", ")[0] + weatherTomorrow.split(", ")[1];
-    }
-
     @NonNull
     @Override
     public Result doWork() {
@@ -43,12 +36,19 @@ public class DailyNotificationWorker extends Worker {
         return Result.success();
     }
 
+    private String getWeatherTomorrow() {
+        SetWeather.setWeather(getApplicationContext());
+        String weatherTomorrow = SetWeather.getTomorrowData();
+        icon = weatherTomorrow.split(", ")[2];
+        return "Max: " + weatherTomorrow.split(", ")[0] + "°C Min: " + weatherTomorrow.split(", ")[1]+"°C";
+    }
+
     public void showNotification(String iconIdx, String title, String message) {
-        String iconName = getIconIdxDescription(iconIdx, "icon"); // Получаем имя иконки
-        int iconResId = getIconDrawableId(iconName); // Получаем id ресурса по имени
+        String iconName = getIconIdxDescription(iconIdx, "icon");
+        int iconResId = getIconDrawableId(iconName);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "DAILY_NOTIFICATION_CHANNEL")
-                .setSmallIcon(iconResId != 0 ? iconResId : R.drawable.cearly_sky_night) // Устанавливаем найденную иконку или стандартную
+                .setSmallIcon(iconResId != 0 ? iconResId : R.drawable.cearly_sky_night)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
@@ -67,12 +67,10 @@ public class DailyNotificationWorker extends Worker {
         notificationManager.notify(1, builder.build());
     }
 
-    // Метод для получения идентификатора ресурса иконки по ее имени в drawable
     private int getIconDrawableId(String iconName) {
         return context.getResources().getIdentifier(iconName, "drawable", context.getPackageName());
     }
 
-    // Здесь остается ваш метод getIconIdxDescription, чтобы получать имя иконки по коду
     public String getIconIdxDescription(String iconIdx, String returnDataType) {
         if (returnDataType.equals("icon")) {
             return readFromWeatherStatusIconFile(1, iconIdx);
@@ -84,10 +82,8 @@ public class DailyNotificationWorker extends Worker {
     }
 
     private String readFromWeatherStatusIconFile(int returnData, String iconIdx) {
-        // Получаем InputStream для файла
         InputStream inputStream = context.getResources().openRawResource(R.raw.weather_status_icons);
 
-        // Читаем содержимое файла
         String iconPath = readFromFileInputStreamType(inputStream);
 
         if (iconPath != null && !iconPath.isEmpty()) {
@@ -100,7 +96,7 @@ public class DailyNotificationWorker extends Worker {
                 String iconStr = iconInt + "";
 
                 if (iconStr.equals(icon[0])) {
-                    return icon[returnData];  // Возвращаем иконку
+                    return icon[returnData];
                 }
             }
         }

@@ -38,7 +38,7 @@ import com.nudha.weatherapp.api.LocationByCityName.SearchCoordinatesUsingNominat
 import com.nudha.weatherapp.api.LocationByCityName.SeatchingNameOfCityByCoordinates;
 import com.nudha.weatherapp.api.meteomatics.requestCreator.LocationPartRequest;
 import com.nudha.weatherapp.data.SetWeather;
-import com.nudha.weatherapp.domains.Hourly;
+import com.nudha.weatherapp.domains.HourlyDomain;
 import com.nudha.weatherapp.adapters.HourlyAdapters;
 import com.nudha.weatherapp.R;
 import com.nudha.weatherapp.fragments.CardDialogFragment;
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 setWeatherNow();
 
                 // Обновляем данные для адаптера
-                ArrayList<Hourly> items = getHourlyArrayList();
+                ArrayList<HourlyDomain> items = getHourlyArrayList();
                 ((HourlyAdapters) adapterHourly).updateData(items); // Обновляем данные адаптера
                 adapterHourly.notifyDataSetChanged(); // Уведомляем адаптер о новых данных
             });
@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRecyclerview(){
         //https://api.meteomatics.com/2024-08-08T16:00:00ZP1D:PT1H/t_2m:C,weather_symbol_1h:idx/50,10/json
-        ArrayList<Hourly> items = getHourlyArrayList();
+        ArrayList<HourlyDomain> items = getHourlyArrayList();
 
         recyclerView = findViewById(R.id.view1);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -267,9 +267,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private ArrayList<Hourly> getHourlyArrayList(){
-        //Log.d("MainActivity", "Get Hourly ArrayList method called");
-        ArrayList<Hourly> items = new ArrayList<>();
+    private ArrayList<HourlyDomain> getHourlyArrayList(){
+        //Log.d("MainActivity", "Get HourlyDomain ArrayList method called");
+        ArrayList<HourlyDomain> items = new ArrayList<>();
 
         String weatherData24H = readFromFile(WEATHER_DATA_24_H);
 
@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
                     String icon_status = parts[2];
                     //Log.d("MainActivity", "Icon Status: " + icon_status);
                     String icon = getIconIdxDescription(icon_status, "icon");
-                    items.add(new Hourly(time.substring(11,13)+":00", temp, icon));
+                    items.add(new HourlyDomain(time.substring(11,13)+":00", temp, icon));
                 }else {
                     Log.d("MainActivity", "No weather data found");
                 }
@@ -456,11 +456,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         long initialDelay = calendar.getTimeInMillis() - System.currentTimeMillis();
-        PeriodicWorkRequest dailyWorkRequest = new PeriodicWorkRequest.Builder(DailyNotificationWorker.class, 24, TimeUnit.HOURS)
+        PeriodicWorkRequest dailyWorkRequest =
+                new PeriodicWorkRequest.Builder(DailyNotificationWorker.class, 24, TimeUnit.HOURS)
                 .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
                 .build();
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork("DailyNotification", ExistingPeriodicWorkPolicy.REPLACE, dailyWorkRequest);
+        WorkManager.getInstance(this)
+                .enqueueUniquePeriodicWork("DailyNotification",
+                        ExistingPeriodicWorkPolicy.REPLACE, dailyWorkRequest);
     }
 
     private void requestNotificationPermission() {
@@ -481,7 +484,7 @@ public class MainActivity extends AppCompatActivity {
                 == PackageManager.PERMISSION_GRANTED) {
             scheduleDailyNotification();
         } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-            Toast.makeText(this, "Разрешите уведомления для возможности отправки полезных сообщений", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Enable notifications to be able to send useful messages", Toast.LENGTH_SHORT).show();
             requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
         } else {
             requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);

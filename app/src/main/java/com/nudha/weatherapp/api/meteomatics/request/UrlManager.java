@@ -5,7 +5,6 @@ public class UrlManager {
     private String baseUrl;
 
     private UrlManager() {
-        // Установите начальный базовый URL
         baseUrl = "https://api.meteomatics.com/";
     }
 

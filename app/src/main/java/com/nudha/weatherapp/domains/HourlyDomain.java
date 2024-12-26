@@ -1,11 +1,11 @@
 package com.nudha.weatherapp.domains;
 
-public class Hourly {
+public class HourlyDomain {
     private String hour;
     private Double temp;
     private String picPath;
 
-    public Hourly(String hour, double temp, String picPath) {
+    public HourlyDomain(String hour, double temp, String picPath) {
         this.hour = hour;
         this.temp = temp;
         this.picPath = picPath;
